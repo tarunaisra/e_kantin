@@ -1,122 +1,251 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'models/product_model.dart';
+import 'providers/cart_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProviderTaruna()),
+      ],
+      child: const MyAppTaruna(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyAppTaruna extends StatelessWidget {
+  const MyAppTaruna({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Smart E-Kantin',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const HomePageTaruna(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePageTaruna extends StatefulWidget {
+  const HomePageTaruna({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePageTaruna> createState() => _HomePageTarunaState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomePageTarunaState extends State<HomePageTaruna> {
+  List<ProductModel> productsTaruna = [
+    ProductModel(productId: "1", name: "Nasi Goreng", price: 15000, stock: 20, imageUrl: "https://via.placeholder.com/100?text=Nasi+Goreng"),
+    ProductModel(productId: "2", name: "Ayam Geprek", price: 14000, stock: 15, imageUrl: "https://via.placeholder.com/100?text=Ayam+Geprek"),
+    ProductModel(productId: "3", name: "Soto Ayam", price: 12000, stock: 25, imageUrl: "https://via.placeholder.com/100?text=Soto+Ayam"),
+  ];
+  final bool isAdminTaruna = true;
 
-  void _incrementCounter() {
+  void editProductTaruna(ProductModel product, double newPrice, int newStock) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      final idx = productsTaruna.indexWhere((p) => p.productId == product.productId);
+      if (idx != -1) {
+        productsTaruna[idx] = ProductModel(
+          productId: product.productId,
+          name: product.name,
+          price: newPrice,
+          stock: newStock,
+          imageUrl: product.imageUrl,
+        );
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Smart E-Kantin'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CartPageTaruna()),
+              );
+            },
+          ),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: ListView.builder(
+        itemCount: productsTaruna.length,
+        itemBuilder: (context, index) {
+          final productTaruna = productsTaruna[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            elevation: 4,
+            child: ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(productTaruna.imageUrl, width: 60, height: 60, fit: BoxFit.cover),
+              ),
+              title: Text(productTaruna.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Harga: Rp${productTaruna.price.toStringAsFixed(0)}', style: const TextStyle(color: Colors.green)),
+                  Text('Stok: ${productTaruna.stock}', style: const TextStyle(color: Colors.blue)),
+                ],
+              ),
+              trailing: isAdminTaruna
+                  ? IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => EditProductDialogTaruna(
+                            product: productTaruna,
+                            onSave: (newPrice, newStock) {
+                              editProductTaruna(productTaruna, newPrice, newStock);
+                            },
+                          ),
+                        );
+                      },
+                    )
+                  : ElevatedButton(
+                      child: const Text('Add'),
+                      onPressed: () {
+                        Provider.of<CartProviderTaruna>(context, listen: false).addToCartTaruna(productTaruna);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${productTaruna.name} ditambahkan ke keranjang')),
+                        );
+                      },
+                    ),
             ),
-          ],
-        ),
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class EditProductDialogTaruna extends StatefulWidget {
+  final ProductModel product;
+  final Function(double, int) onSave;
+  const EditProductDialogTaruna({super.key, required this.product, required this.onSave});
+
+  @override
+  State<EditProductDialogTaruna> createState() => _EditProductDialogTarunaState();
+}
+
+class _EditProductDialogTarunaState extends State<EditProductDialogTaruna> {
+  late TextEditingController priceControllerTaruna;
+  late TextEditingController stockControllerTaruna;
+
+  @override
+  void initState() {
+    super.initState();
+    priceControllerTaruna = TextEditingController(text: widget.product.price.toStringAsFixed(0));
+    stockControllerTaruna = TextEditingController(text: widget.product.stock.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Edit ${widget.product.name}'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: priceControllerTaruna,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Harga'),
+          ),
+          TextField(
+            controller: stockControllerTaruna,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Stok'),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Batal'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        ElevatedButton(
+          child: const Text('Simpan'),
+          onPressed: () {
+            final newPriceTaruna = double.tryParse(priceControllerTaruna.text) ?? widget.product.price;
+            final newStockTaruna = int.tryParse(stockControllerTaruna.text) ?? widget.product.stock;
+            widget.onSave(newPriceTaruna, newStockTaruna);
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Perubahan disimpan!')),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class CartPageTaruna extends StatelessWidget {
+  const CartPageTaruna({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cartTaruna = Provider.of<CartProviderTaruna>(context);
+    final nimTaruna = "2141720123"; // Ganti dengan NIM user login
+    final lastDigitTaruna = int.parse(nimTaruna[nimTaruna.length - 1]);
+    final gratisOngkirTaruna = lastDigitTaruna % 2 == 0;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Keranjang')),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: cartTaruna.cartItemsTaruna.length,
+              itemBuilder: (context, index) {
+                final itemTaruna = cartTaruna.cartItemsTaruna[index];
+                return ListTile(
+                  title: Text(itemTaruna.name),
+                  subtitle: Text('Rp${itemTaruna.price.toStringAsFixed(0)}'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      cartTaruna.removeFromCartTaruna(itemTaruna.productId);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Total: Rp${cartTaruna.totalPriceTaruna.toStringAsFixed(0)}'),
+                Text(gratisOngkirTaruna ? 'Gratis Ongkir!' : 'Diskon: Rp${cartTaruna.hitungDiskonSari(nimTaruna).toStringAsFixed(0)}'),
+                Text('Final: Rp${cartTaruna.getFinalPriceTaruna(nimTaruna).toStringAsFixed(0)}'),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  child: const Text('Checkout'),
+                  onPressed: () async {
+                    await cartTaruna.checkoutTaruna(nimTaruna);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Checkout berhasil!')),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

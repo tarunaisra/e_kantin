@@ -2,65 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 
-class CartProvider extends ChangeNotifier {
-  final List<ProductModel> _cartItems = [];
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+class CartProviderTaruna extends ChangeNotifier {
+  final List<ProductModel> _cartItemsBudi = [];
+  final FirebaseFirestore _dbBudi = FirebaseFirestore.instance;
 
-  List<ProductModel> get cartItems => _cartItems;
+  List<ProductModel> get cartItemsBudi => _cartItemsBudi;
 
-  void addToCart(ProductModel product) {
-    _cartItems.add(product);
+  void addToCartBudi(ProductModel productBudi) {
+    _cartItemsBudi.add(productBudi);
     notifyListeners();
   }
 
-  void removeFromCart(String productId) {
-    _cartItems.removeWhere((item) => item.productId == productId);
+  void removeFromCartBudi(String productIdBudi) {
+    _cartItemsBudi.removeWhere((item) => item.productId == productIdBudi);
     notifyListeners();
   }
 
-  void clearCart() {
-    _cartItems.clear();
+  void clearCartBudi() {
+    _cartItemsBudi.clear();
     notifyListeners();
   }
 
-  double get totalPrice {
-    return _cartItems.fold(0, (sum, item) => sum + item.price);
+  double get totalPriceBudi {
+    return _cartItemsBudi.fold(0, (sum, item) => sum + item.price);
   }
 
-  // Hitung diskon berdasarkan NIM (Ganjil/Genap)
-  // Diskon ganjil: 5%, Diskon genap: 10%
-  double getDiscount(String nim) {
-    int lastDigit = int.parse(nim[nim.length - 1]);
-    if (lastDigit % 2 == 1) {
-      // Ganjil: 5%
-      return totalPrice * 0.05;
+  // Logic Trap: hitung diskon sari
+  double hitungDiskonSari(String nimSari) {
+    int lastDigitSari = int.parse(nimSari[nimSari.length - 1]);
+    if (lastDigitSari % 2 == 1) {
+      // Ganjil: diskon 5%
+      return totalPriceBudi * 0.05;
     } else {
-      // Genap: 10%
-      return totalPrice * 0.10;
+      // Genap: gratis ongkir, diskon 0
+      return 0;
     }
   }
 
-  double getFinalPrice(String nim) {
-    return totalPrice - getDiscount(nim);
+  double getFinalPriceBudi(String nimSari) {
+    return totalPriceBudi - hitungDiskonSari(nimSari);
   }
 
   // Checkout dengan update stok di Firebase
-  Future<void> checkout(String nim) async {
+  Future<void> checkoutBudi(String nimSari) async {
     try {
       // Gunakan transaction untuk atomic write
-      await _db.runTransaction((transaction) async {
-        for (var item in _cartItems) {
-          DocumentReference productRef = _db.collection('products').doc(item.productId);
+      await _dbBudi.runTransaction((transaction) async {
+        for (var itemBudi in _cartItemsBudi) {
+          DocumentReference productRefBudi = _dbBudi.collection('products').doc(itemBudi.productId);
           
           // Kurangi stok
-          transaction.update(productRef, {
+          transaction.update(productRefBudi, {
             'stock': FieldValue.increment(-1),
           });
         }
       });
 
       // Jika berhasil, clear cart
-      clearCart();
+      clearCartBudi();
       print('Checkout berhasil! Stok diupdate.');
     } catch (e) {
       print('Error saat checkout: $e');
