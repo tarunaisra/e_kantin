@@ -3,28 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 
 class CartProviderTaruna extends ChangeNotifier {
-  final List<ProductModel> _cartItemsBudi = [];
-  final FirebaseFirestore _dbBudi = FirebaseFirestore.instance;
+  final List<ProductModel> _cartItemsTaruna = [];
+  final FirebaseFirestore _dbTaruna = FirebaseFirestore.instance;
 
-  List<ProductModel> get cartItemsBudi => _cartItemsBudi;
+  List<ProductModel> get cartItemsTaruna => _cartItemsTaruna;
 
-  void addToCartBudi(ProductModel productBudi) {
-    _cartItemsBudi.add(productBudi);
+  void addToCartTaruna(ProductModel productTaruna) {
+    _cartItemsTaruna.add(productTaruna);
     notifyListeners();
   }
 
-  void removeFromCartBudi(String productIdBudi) {
-    _cartItemsBudi.removeWhere((item) => item.productId == productIdBudi);
+  void removeFromCartTaruna(String productIdTaruna) {
+    _cartItemsTaruna.removeWhere((item) => item.productId == productIdTaruna);
     notifyListeners();
   }
 
-  void clearCartBudi() {
-    _cartItemsBudi.clear();
+  void clearCartTaruna() {
+    _cartItemsTaruna.clear();
     notifyListeners();
   }
 
-  double get totalPriceBudi {
-    return _cartItemsBudi.fold(0, (sum, item) => sum + item.price);
+  double get totalPriceTaruna {
+    return _cartItemsTaruna.fold(0, (sum, item) => sum + item.price);
   }
 
   // Logic Trap: hitung diskon sari
@@ -32,34 +32,34 @@ class CartProviderTaruna extends ChangeNotifier {
     int lastDigitSari = int.parse(nimSari[nimSari.length - 1]);
     if (lastDigitSari % 2 == 1) {
       // Ganjil: diskon 5%
-      return totalPriceBudi * 0.05;
+      return totalPriceTaruna * 0.05;
     } else {
       // Genap: gratis ongkir, diskon 0
       return 0;
     }
   }
 
-  double getFinalPriceBudi(String nimSari) {
-    return totalPriceBudi - hitungDiskonSari(nimSari);
+  double getFinalPriceTaruna(String nimSari) {
+    return totalPriceTaruna - hitungDiskonSari(nimSari);
   }
 
   // Checkout dengan update stok di Firebase
-  Future<void> checkoutBudi(String nimSari) async {
+  Future<void> checkoutTaruna(String nimSari) async {
     try {
       // Gunakan transaction untuk atomic write
-      await _dbBudi.runTransaction((transaction) async {
-        for (var itemBudi in _cartItemsBudi) {
-          DocumentReference productRefBudi = _dbBudi.collection('products').doc(itemBudi.productId);
+      await _dbTaruna.runTransaction((transaction) async {
+        for (var itemTaruna in _cartItemsTaruna) {
+          DocumentReference productRefTaruna = _dbTaruna.collection('products').doc(itemTaruna.productId);
           
           // Kurangi stok
-          transaction.update(productRefBudi, {
+          transaction.update(productRefTaruna, {
             'stock': FieldValue.increment(-1),
           });
         }
       });
 
       // Jika berhasil, clear cart
-      clearCartBudi();
+      clearCartTaruna();
       print('Checkout berhasil! Stok diupdate.');
     } catch (e) {
       print('Error saat checkout: $e');
