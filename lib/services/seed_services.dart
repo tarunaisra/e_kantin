@@ -24,4 +24,5 @@ class SeedService {
       await _db.collection("products").doc(item.productId).set(item.toJson());
     }
   }
+  
 }
