@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../controllers/auth_controller_bac.dart';
 
 class RegisterScreenBac extends StatefulWidget {
+  const RegisterScreenBac({super.key});
+
   @override
   _RegisterScreenBacState createState() => _RegisterScreenBacState();
 }

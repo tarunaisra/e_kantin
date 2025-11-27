@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../controllers/auth_controller_bac.dart';
 
 class LoginScreenBac extends StatefulWidget {
+  const LoginScreenBac({super.key});
+
   @override
   _LoginScreenBacState createState() => _LoginScreenBacState();
 }
