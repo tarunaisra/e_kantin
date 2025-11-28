@@ -5,7 +5,7 @@ import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,22 +15,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Flutter App',
-      debugShowCheckedModeBanner:
-          false, // Tambahkan baris ini untuk menghapus banner DEBUG
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: WelcomeScreen(),
+      home: const WelcomeScreen(),
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
+        '/login': (context) => LoginScreen_Yogi(),
+        '/register': (context) => RegisterScreen_Yogi(),
         '/home': (context) => HomeScreen(),
-        '/cart': (context) => CartScreen(), // Tambahkan route untuk CartScreen
+        '/cart': (context) => CartScreen(),
       },
     );
   }
 }
+
 
 // WelcomeScreen yang lebih modern, menarik, dan fokus pada E-Kantin
 class WelcomeScreen extends StatefulWidget {
