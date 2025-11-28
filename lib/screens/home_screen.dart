@@ -1,10 +1,42 @@
 import 'package:flutter/material.dart';
-import '../widgets/loading_indicator.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen_Yogi extends StatefulWidget {
+  const HomeScreen_Yogi({super.key});
 
-  // Example product list (UI-only). Variables for widgets must have 'bac'
+  @override
+  State<HomeScreen_Yogi> createState() => _HomeScreenState_Yogi();
+}
+
+class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  //  daftar produk
+  final List<String> products = [
+    'Nasi Goreng',
+    'Sate Kambing',
+    'Soto Ayam',
+    'Rujak Lontong',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
