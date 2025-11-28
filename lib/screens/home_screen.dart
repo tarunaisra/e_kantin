@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/checkout_service.dart';
-import '../widgets/loading_indicator.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
