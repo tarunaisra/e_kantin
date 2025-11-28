@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/checkout_service.dart';
+import '../widgets/loading_indicator.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,36 +7,83 @@ class HomeScreen extends StatelessWidget {
   // Example product list (UI-only). Variables for widgets must have 'bac'
   @override
   Widget build(BuildContext context) {
-    final products = [
-      {'product id': 'P001', 'name': 'Nasi Goreng', 'price': 15000},
-      {'product id': 'P002', 'name': 'Ayam Geprek', 'price': 18000},
-    ];
-
-    final listViewbac = ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: products.length,
-      itemBuilder: (ctx, i) {
-        final p = products[i];
-        final tilebac = ListTile(
-          leading: const Icon(Icons.fastfood),
-          title: Text(p['name'] as String),
-          subtitle: Text('Rp ${p['price']}'),
-          trailing: ElevatedButton(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Beranda'),
+        backgroundColor: Colors.blue.shade900,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // for UI demo: go to cart
               Navigator.pushNamed(context, '/cart');
             },
-            child: const Text('Add'),
           ),
-        );
-        return Card(margin: const EdgeInsets.only(bottom: 12), child: tilebac);
-      },
-    );
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Smart E-Kantin')),
-      body: listViewbac,
-      // optional bottom nav or action can be added
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade300, Colors.blue.shade900],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: FadeTransition(
+          opacity: _animation,
+          child: ListView.builder(
+            padding: EdgeInsets.all(20),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return Card(
+                color: Colors.white.withOpacity(0.1), // perbaikan
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ListTile(
+                  leading: Icon(Icons.shopping_bag, color: Colors.white),
+                  title: Text(
+                    products[index],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Harga: Rp ${(index + 1) * 10000}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      // Simulasi tambah ke cart
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${products[index]} ditambahkan ke keranjang',
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('Tambah'),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

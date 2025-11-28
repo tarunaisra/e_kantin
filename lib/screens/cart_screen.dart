@@ -1,75 +1,232 @@
 import 'package:flutter/material.dart';
-import '../services/checkout_service.dart';
+import '../widgets/loading_indicator.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  // this example keeps cart locally for UI demo; widget variable names have bac
-  final List<Map<String, dynamic>> cartItemsbac = [
-    {'product id': 'P001', 'name': 'Nasi Goreng', 'price': 15000, 'qty': 1},
-    {'product id': 'P002', 'name': 'Ayam Geprek', 'price': 18000, 'qty': 2},
+  final List<Map<String, dynamic>> cartItems = [
+    {'name': 'Nasi Goreng', 'price': 15000, 'quantity': 1},
+    {'name': 'Sate Kambing', 'price': 20000, 'quantity': 2},
+    {'name': 'Soto Ayam', 'price': 13500, 'quantity': 3},
+    {'name': 'Rujak Lontong', 'price': 10000, 'quantity': 4},
   ];
 
-  bool loadingbac = false;
+  String pickupTime = 'Sekarang';
+  final List<String> pickupOptions = ['Sekarang', '12:00', '12:30', '13:00'];
 
-  Future<void> _onCheckoutbac() async {
-    setState(() => loadingbac = true);
-    // NIM 141 (digit last = 1) -> odd -> discount 5% (Logic Trap)
-    try {
-      final res = await CheckoutService().checkoutbac(nimbac: '141', itemsbac: cartItemsbac);
-      // show result
-      await showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Checkout Result'),
-          content: Text('Total final: Rp ${res['totalFinal']}\nDiscount: Rp ${res['discount']}\nShipping: Rp ${res['shipping']}'),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+  double get totalPrice => cartItems.fold(
+    0,
+    (sum, item) => sum + (item['price'] * item['quantity']),
+  );
+
+  void _incrementQuantity(int index) {
+    setState(() => cartItems[index]['quantity']++);
+  }
+
+  void _decrementQuantity(int index) {
+    setState(() {
+      if (cartItems[index]['quantity'] > 1) cartItems[index]['quantity']--;
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() => cartItems.removeAt(index));
+  }
+
+  void _selectPickupTime(String time) {
+    setState(() => pickupTime = time);
+  }
+
+  void _proceedToCheckout() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CheckoutScreen(
+          cartItems: cartItems,
+          totalPrice: totalPrice,
+          pickupTime: pickupTime,
         ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Checkout gagal: $e')));
-    } finally {
-      setState(() => loadingbac = false);
-    }
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final listViewbac = ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: cartItemsbac.length,
-      itemBuilder: (ctx, i) {
-        final it = cartItemsbac[i];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            title: Text(it['name'] as String),
-            subtitle: Text('Qty: ${it['qty']}'),
-            trailing: Text('Rp ${it['price'] * it['qty']}'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pesanan Saya'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.access_time, color: Colors.white),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Pilih Waktu Ambil'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: pickupOptions
+                        .map(
+                          (option) => ListTile(
+                            title: Text(option),
+                            onTap: () {
+                              _selectPickupTime(option);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              );
+            },
           ),
-        );
-      },
-    );
-
-    final checkoutButtonbac = SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: loadingbac ? null : _onCheckoutbac,
-        child: loadingbac ? const CircularProgressIndicator() : const Text('CHECKOUT'),
+        ],
+      ),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1E3C72), Color(0xFF2A5298)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: cartItems.isEmpty
+            ? Center(
+                child: Text(
+                  'Keranjang kosong',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        top: kToolbarHeight + 20,
+                        left: 16,
+                        right: 16,
+                      ),
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final item = cartItems[index];
+                        return Card(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          child: ListTile(
+                            title: Text(
+                              item['name'],
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            subtitle: Text(
+                              'Rp ${item['price']}',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.remove, color: Colors.white),
+                                  onPressed: () => _decrementQuantity(index),
+                                ),
+                                Text(
+                                  '${item['quantity']}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.add, color: Colors.white),
+                                  onPressed: () => _incrementQuantity(index),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _removeItem(index),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total: Rp ${totalPrice.toInt()}',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        ElevatedButton(
+                          onPressed: _proceedToCheckout,
+                          child: Text('Checkout'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
+  }
+}
 
+class CheckoutScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> cartItems;
+  final double totalPrice;
+  final String pickupTime;
+
+  const CheckoutScreen({
+    super.key,
+    required this.cartItems,
+    required this.totalPrice,
+    required this.pickupTime,
+  });
+
+  void _confirmOrder(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Pesanan dikonfirmasi! Bayar cash saat pickup pada $pickupTime.',
+        ),
+      ),
+    );
+    Navigator.popUntil(context, (route) => route.isFirst);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Keranjang')),
-      body: Column(
-        children: [
-          Expanded(child: listViewbac),
-          Padding(padding: const EdgeInsets.all(16), child: checkoutButtonbac),
-        ],
+      appBar: AppBar(title: Text('Konfirmasi Pesanan')),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Text('Pickup: $pickupTime'),
+            SizedBox(height: 20),
+            Text('Metode: Cash'),
+            Spacer(),
+            Text(
+              'Total: Rp ${totalPrice.toInt()}',
+              style: TextStyle(fontSize: 24),
+            ),
+            ElevatedButton(
+              onPressed: () => _confirmOrder(context),
+              child: Text('Konfirmasi'),
+            ),
+          ],
+        ),
       ),
     );
   }

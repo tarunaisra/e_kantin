@@ -1,95 +1,161 @@
 import 'package:flutter/material.dart';
-import '../controllers/auth_controller.dart';
+import 'package:flutter/foundation.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen_Yogi extends StatefulWidget {
+  const LoginScreen_Yogi({super.key});
+
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreen_Yogi> createState() => _LoginScreenState_Yogi();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  // NOTE: variable widget names MUST have watermark 'bac'
-  final TextEditingController emailControllerbac = TextEditingController();
-  final TextEditingController passwordControllerbac = TextEditingController();
-  final GlobalKey<FormState> formKeybac = GlobalKey<FormState>();
-  final AuthController _authController = AuthController();
+class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
-  bool loadingbac = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  // function logic MUST have watermark 'bac'
-  Future<void> _submitLoginbac() async {
-    if (!formKeybac.currentState!.validate()) return;
-    setState(() => loadingbac = true);
-    await _authController.loginbac(
-      emailbac: emailControllerbac.text.trim(),
-      passbac: passwordControllerbac.text,
-      context: context,
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
     );
-    setState(() => loadingbac = false);
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
   }
 
   @override
   void dispose() {
-    emailControllerbac.dispose();
-    passwordControllerbac.dispose();
+    _controller.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // UI widgets variables also suffixed bac where they are named
-    final emailFieldbac = TextFormField(
-      controller: emailControllerbac,
-      decoration: const InputDecoration(labelText: 'Email (kampus)'),
-      validator: (v) {
-        if (v == null || v.isEmpty) return 'Email wajib diisi';
-        if (!v.contains('@')) return 'Email tidak valid';
-        if (!v.endsWith('@kampus.ac.id')) return 'Gunakan domain kampus (.ac.id)';
-        return null;
-      },
-    );
-
-    final passwordFieldbac = TextFormField(
-      controller: passwordControllerbac,
-      obscureText: true,
-      decoration: const InputDecoration(labelText: 'Password'),
-      validator: (v) {
-        if (v == null || v.isEmpty) return 'Password wajib diisi';
-        if (v.length < 6) return 'Minimal 6 karakter';
-        return null;
-      },
-    );
-
-    final loginButtonbac = SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: loadingbac ? null : _submitLoginbac,
-        child: loadingbac ? const CircularProgressIndicator() : const Text('LOGIN'),
-      ),
-    );
-
-    final toRegisterButtonbac = TextButton(
-      onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
-      child: const Text('Belum punya akun? Daftar'),
-    );
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: formKeybac,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 12),
-              emailFieldbac,
-              const SizedBox(height: 12),
-              passwordFieldbac,
-              const SizedBox(height: 20),
-              loginButtonbac,
-              toRegisterButtonbac,
-            ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade300, Colors.blue.shade900],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: FadeTransition(
+          opacity: _animation,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.login, size: 100, color: Colors.white),
+                  SizedBox(height: 20),
+                  Text(
+                    'Masuk',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 40),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    cursorColor: Colors.white,
+                    onChanged: (value) {
+                      if (kDebugMode) print('Email: $value');
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                    ),
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                    cursorColor: Colors.white,
+                    onChanged: (value) {
+                      if (kDebugMode) print('Password: $value');
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                    ),
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  SizedBox(height: 40),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue,
+                      minimumSize: Size(double.infinity, 55),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 10,
+                    ),
+                    child: Text(
+                      'Masuk',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: Text(
+                      'Belum punya akun? Daftar',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
