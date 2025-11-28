@@ -16,10 +16,10 @@ class AuthService_Rapli {
     }
 
     // Perbaikan: Menggunakan RegExp untuk validasi format email + domain wajib
-    const String campusDomain_R = r'@gmail\.com$';
-    final RegExp emailRegex_R = RegExp(r'^[a-zA-Z0-9.]+' + campusDomain_R);
+    const String campusdomainR = r'@gmail\.com$';
+    final RegExp emailregexR = RegExp(r'^[a-zA-Z0-9.]+' + campusdomainR);
 
-    if (!emailRegex_R.hasMatch(value)) {
+    if (!emailregexR.hasMatch(value)) {
       return 'Wajib gunakan format email yang valid dan domain kampus (ex: @gmail.com)!';
     }
     return null;
@@ -36,9 +36,9 @@ class AuthService_Rapli {
   // 3. Logika Login (Watermark Code Rapli)
   Future<User?> signInUser_Rapli(String email, String password) async {
     try {
-      UserCredential userCredential_R = await _auth_Rap
+      UserCredential usercredentialR = await _auth_Rap
           .signInWithEmailAndPassword(email: email, password: password);
-      return userCredential_R.user;
+      return usercredentialR.user;
     } catch (e) {
       print("Error Login: $e");
       return null;
@@ -54,11 +54,11 @@ class AuthService_Rapli {
   }) async {
     try {
       // 1. Buat Akun Auth
-      UserCredential userCredential_R = await _auth_Rap
+      UserCredential usercredentialR = await _auth_Rap
           .createUserWithEmailAndPassword(email: email, password: password);
-      final user_R = userCredential_R.user;
+      final userR = usercredentialR.user;
 
-      if (user_R != null) {
+      if (userR != null) {
         // 2. Simpan Data ke Firestore (Collection: Users)
         await _firestore_Rap.collection('Users').doc(nim).set({
           'user_id': nim,
@@ -67,7 +67,7 @@ class AuthService_Rapli {
           'password': password, // Disimpan sesuai Data Dictionary
         });
       }
-      return user_R;
+      return userR;
     } catch (e) {
       print("Error Register: $e");
       return null;
