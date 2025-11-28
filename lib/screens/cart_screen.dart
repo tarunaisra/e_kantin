@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/loading_indicator.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
