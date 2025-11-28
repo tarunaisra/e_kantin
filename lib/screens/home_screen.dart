@@ -12,7 +12,7 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // Simulasi daftar produk
+  //  daftar produk
   final List<String> products = [
     'Nasi Goreng',
     'Sate Kambing',
