@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen_Yogi extends StatefulWidget {
+  const LoginScreen_Yogi({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreen_Yogi> createState() => _LoginScreenState_Yogi();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -67,26 +67,19 @@ class _LoginScreenState extends State<LoginScreen>
                   SizedBox(height: 40),
                   TextField(
                     controller: _emailController,
-                    keyboardType:
-                        TextInputType.emailAddress, // Pastikan keyboard muncul
-                    cursorColor: Colors.white, // Kursor putih untuk visibilitas
+                    keyboardType: TextInputType.emailAddress,
+                    cursorColor: Colors.white,
                     onChanged: (value) {
-                      // Opsional: Debug input
                       if (kDebugMode) print('Email: $value');
                     },
                     decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle: TextStyle(color: Colors.white),
                       filled: true,
-                      fillColor: Colors.white.withValues(
-                        alpha: 0.8,
-                      ), // Lebih terang agar input terlihat
+                      fillColor: Colors.white.withValues(alpha: 0.8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                          width: 1,
-                        ), // Border putih untuk kontras
+                        borderSide: BorderSide(color: Colors.white, width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -97,28 +90,22 @@ class _LoginScreenState extends State<LoginScreen>
                         borderSide: BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
-                    style: TextStyle(
-                      color: Colors.black,
-                    ), // Teks hitam untuk kontras pada background putih
+                    style: TextStyle(color: Colors.black),
                   ),
                   SizedBox(height: 20),
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    keyboardType: TextInputType
-                        .visiblePassword, // Keyboard untuk password
+                    keyboardType: TextInputType.visiblePassword,
                     cursorColor: Colors.white,
                     onChanged: (value) {
-                      // Opsional: Debug input
                       if (kDebugMode) print('Password: $value');
                     },
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(color: Colors.white),
                       filled: true,
-                      fillColor: Colors.white.withValues(
-                        alpha: 0.8,
-                      ), // Sama seperti di atas
+                      fillColor: Colors.white.withValues(alpha: 0.8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: Colors.white, width: 1),
@@ -132,12 +119,11 @@ class _LoginScreenState extends State<LoginScreen>
                         borderSide: BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
-                    style: TextStyle(color: Colors.black), // Teks hitam
+                    style: TextStyle(color: Colors.black),
                   ),
                   SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
-                      // Simulasi login berhasil, navigasi ke home
                       Navigator.pushReplacementNamed(context, '/home');
                     },
                     style: ElevatedButton.styleFrom(
