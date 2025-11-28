@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import '../services/auth_service.dart';
+import 'home_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+/// Register Screen 
+class RegisterScreen_Yogi extends StatefulWidget {
+  const RegisterScreen_Yogi({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterScreen_Yogi> createState() => _RegisterScreenState_Yogi();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
+/// State Class 
+class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
+
+  final GlobalKey<FormState> _formKey_Yogi = GlobalKey<FormState>();
+
+  // Controllers (UI Developer: Yogi)
+  final TextEditingController _name_Yogi = TextEditingController();
+  final TextEditingController _email_Yogi = TextEditingController();
+  final TextEditingController _password_Yogi = TextEditingController();
+  final TextEditingController _confirmPassword_Yogi = TextEditingController();
+  final TextEditingController _nim_Yogi = TextEditingController();
+
+  bool _isLoading_Yogi = false;
 
   @override
   void initState() {
@@ -33,10 +43,11 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   void dispose() {
     _controller.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _name_Yogi.dispose();
+    _email_Yogi.dispose();
+    _password_Yogi.dispose();
+    _confirmPassword_Yogi.dispose();
+    _nim_Yogi.dispose();
     super.dispose();
   }
 
@@ -54,173 +65,178 @@ class _RegisterScreenState extends State<RegisterScreen>
         child: FadeTransition(
           opacity: _animation,
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person_add, size: 100, color: Colors.white),
-                  SizedBox(height: 20),
-                  Text(
-                    'Daftar',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey_Yogi,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.person_add, size: 100, color: Colors.white),
+                      SizedBox(height: 20),
+                      Text(
+                        'Daftar',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 40),
+
+                      // NIM
+                      TextFormField(
+                        controller: _nim_Yogi,
+                        keyboardType: TextInputType.number,
+                        cursorColor: Colors.white,
+                        validator: (value) =>
+                            value!.isEmpty ? "NIM tidak boleh kosong" : null,
+                        decoration: _inputStyle_Yogi("NIM"),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Nama
+                      TextFormField(
+                        controller: _name_Yogi,
+                        cursorColor: Colors.white,
+                        validator: (value) =>
+                            value!.isEmpty ? "Nama tidak boleh kosong" : null,
+                        decoration: _inputStyle_Yogi("Nama"),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Email
+                      TextFormField(
+                        controller: _email_Yogi,
+                        keyboardType: TextInputType.emailAddress,
+                        cursorColor: Colors.white,
+                        validator: (value) =>
+                            _authService_Rapli.validateEmail_Rapli(value),
+                        decoration: _inputStyle_Yogi("Email"),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Password
+                      TextFormField(
+                        controller: _password_Yogi,
+                        obscureText: true,
+                        cursorColor: Colors.white,
+                        validator: (value) =>
+                            _authService_Rapli.validatePassword_Rapli(value),
+                        decoration: _inputStyle_Yogi("Password"),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 20),
+
+                      // Konfirmasi Password
+                      TextFormField(
+                        controller: _confirmPassword_Yogi,
+                        obscureText: true,
+                        cursorColor: Colors.white,
+                        validator: (value) {
+                          if (value != _password_Yogi.text) {
+                            return "Konfirmasi Password tidak cocok";
+                          }
+                          return null;
+                        },
+                        decoration: _inputStyle_Yogi("Konfirmasi Password"),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      SizedBox(height: 40),
+
+                      // BUTTON DAFTAR
+                      _isLoading_Yogi
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey_Yogi.currentState!.validate()) {
+                                  setState(() => _isLoading_Yogi = true);
+
+                                  final user =
+                                      await _authService_Rapli.registerUser_Rapli(
+                                    email: _email_Yogi.text.trim(),
+                                    password: _password_Yogi.text.trim(),
+                                    nim: _nim_Yogi.text.trim(),
+                                    fullName: _name_Yogi.text.trim(),
+                                  );
+
+                                  setState(() => _isLoading_Yogi = false);
+
+                                  if (user != null) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomeScreen_Yogi(),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Registrasi gagal, coba lagi.")),
+                                    );
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.blue,
+                                minimumSize: Size(double.infinity, 55),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 10,
+                              ),
+                              child: Text(
+                                'Daftar',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                      SizedBox(height: 20),
+
+                      // Tombol ke login
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(context, '/login'),
+                        child: Text(
+                          "Sudah punya akun? Masuk",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 40),
-                  TextField(
-                    controller: _nameController,
-                    keyboardType: TextInputType.name,
-                    cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Nama: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Nama',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Email: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
-                    cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Password: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: _confirmPasswordController,
-                    obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
-                    cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Konfirmasi Password: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Konfirmasi Password',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Simulasi registrasi berhasil, navigasi ke login
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue,
-                      minimumSize: Size(double.infinity, 55),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 10,
-                    ),
-                    child: Text(
-                      'Daftar',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: Text(
-                      'Sudah punya akun? Masuk',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // Styling Input Field (UI Developer: Yogi)
+  InputDecoration _inputStyle_Yogi(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.white),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.8),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide(color: Colors.white, width: 2),
       ),
     );
   }

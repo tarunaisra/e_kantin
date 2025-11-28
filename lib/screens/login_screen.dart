@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home_screen.dart';
+import 'register_screen.dart';
 
+/// Login Screen (UI by Yogi + Auth by Rapli)
 class LoginScreen_Yogi extends StatefulWidget {
   const LoginScreen_Yogi({super.key});
 
@@ -13,8 +17,14 @@ class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  // Controller UI (Yogi)
+  final TextEditingController _email_Yogi = TextEditingController();
+  final TextEditingController _password_Yogi = TextEditingController();
+
+  // Firebase Auth (Rapli)
+  final FirebaseAuth _auth_Rapli = FirebaseAuth.instance;
+
+  bool _isLoading_Rapli = false;
 
   @override
   void initState() {
@@ -30,9 +40,54 @@ class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
   @override
   void dispose() {
     _controller.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _email_Yogi.dispose();
+    _password_Yogi.dispose();
     super.dispose();
+  }
+
+  ///  Fungsi Login Auth (Rapli)
+  Future<void> _login_Rapli() async {
+    String email = _email_Yogi.text.trim();
+    String password = _password_Yogi.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Email & Password tidak boleh kosong")),
+      );
+      return;
+    }
+
+    if (!email.contains("@")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Format email tidak valid")),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password minimal 6 karakter")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading_Rapli = true);
+
+    try {
+      await _auth_Rapli.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.pushReplacementNamed(context, '/home');
+
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Login gagal")),
+      );
+    }
+
+    setState(() => _isLoading_Rapli = false);
   }
 
   @override
@@ -57,7 +112,7 @@ class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
                   Icon(Icons.login, size: 100, color: Colors.white),
                   SizedBox(height: 20),
                   Text(
-                    'Masuk',
+                    'Masuk (UI by Yogi)',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -66,66 +121,39 @@ class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
                   ),
                   SizedBox(height: 40),
                   TextField(
-                    controller: _emailController,
+                    controller: _email_Yogi,
                     keyboardType: TextInputType.emailAddress,
                     cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Email: $value');
-                    },
                     decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle: TextStyle(color: Colors.white),
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
+                      fillColor: Colors.white.withOpacity(0.8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
                     style: TextStyle(color: Colors.black),
                   ),
                   SizedBox(height: 20),
                   TextField(
-                    controller: _passwordController,
+                    controller: _password_Yogi,
                     obscureText: true,
-                    keyboardType: TextInputType.visiblePassword,
                     cursorColor: Colors.white,
-                    onChanged: (value) {
-                      if (kDebugMode) print('Password: $value');
-                    },
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(color: Colors.white),
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.8),
+                      fillColor: Colors.white.withOpacity(0.8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
                       ),
                     ),
                     style: TextStyle(color: Colors.black),
                   ),
                   SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
+                    onPressed: _isLoading_Rapli ? null : _login_Rapli,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.blue,
@@ -135,13 +163,15 @@ class _LoginScreenState_Yogi extends State<LoginScreen_Yogi>
                       ),
                       elevation: 10,
                     ),
-                    child: Text(
-                      'Masuk',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isLoading_Rapli
+                        ? CircularProgressIndicator()
+                        : Text(
+                            'Masuk',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                   SizedBox(height: 20),
                   TextButton(

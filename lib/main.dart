@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       home: WelcomeScreen(),
       routes: {
         '/login': (context) => LoginScreen_Yogi(),
-        '/register': (context) => RegisterScreen(),
+        '/register': (context) => RegisterScreen_Yogi(),
         '/home': (context) => HomeScreen_Yogi(),
         '/cart': (context) => CartScreen(), // Tambahkan route untuk CartScreen
       },
