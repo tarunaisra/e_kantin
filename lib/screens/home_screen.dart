@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen_Yogi extends StatefulWidget {
+  const HomeScreen_Yogi({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen_Yogi> createState() => _HomeScreenState_Yogi();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'Nasi Goreng',
     'Sate Kambing',
     'Soto Ayam',
-    'Rujak lontong',
+    'Rujak Lontong',
   ];
 
   @override
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             itemCount: products.length,
             itemBuilder: (context, index) {
               return Card(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1), // perbaikan
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -93,7 +94,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onPressed: () {
                       // Simulasi tambah ke cart
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${products[index]} ditambahkan ke keranjang')),
+                        SnackBar(
+                          content: Text(
+                            '${products[index]} ditambahkan ke keranjang',
+                          ),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
