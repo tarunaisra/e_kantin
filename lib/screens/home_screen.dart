@@ -93,7 +93,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onPressed: () {
                       // Simulasi tambah ke cart
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${products[index]} ditambahkan ke keranjang')),
+                        SnackBar(
+                          content: Text(
+                            '${products[index]} ditambahkan ke keranjang',
+                          ),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(

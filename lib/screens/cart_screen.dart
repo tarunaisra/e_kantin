@@ -12,7 +12,7 @@ class _CartScreenState extends State<CartScreen> {
     {'name': 'Nasi Goreng', 'price': 15000, 'quantity': 1},
     {'name': 'Sate Kambing', 'price': 20000, 'quantity': 2},
     {'name': 'Soto Ayam', 'price': 13500, 'quantity': 3},
-    {'name': 'Rujak Lontong', 'price':10000, 'quantity': 4},
+    {'name': 'Rujak Lontong', 'price': 10000, 'quantity': 4},
   ];
 
   String pickupTime = 'Sekarang';
