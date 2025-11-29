@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -14,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Flutter App',
+      title: 'E-Kantin',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -22,14 +29,15 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomeScreen(),
       routes: {
-        '/login': (context) => LoginScreen_Yogi(),
-        '/register': (context) => RegisterScreen_Yogi(),
-        '/home': (context) => HomeScreen(),
-        '/cart': (context) => CartScreen(),
+        '/login': (context) => const LoginScreen_Yogi(),
+        '/register': (context) => const RegisterScreen_Yogi(),
+        '/home': (context) => const HomeScreen(),
+        '/cart': (context) => const CartScreen(),
       },
     );
   }
 }
+
 
 
 // WelcomeScreen yang lebih modern, menarik, dan fokus pada E-Kantin
@@ -42,10 +50,10 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _scaleController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late final AnimationController _fadeController;
+  late final AnimationController _scaleController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -68,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     );
 
     _fadeController.forward();
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       _scaleController.forward();
     });
   }
@@ -84,12 +92,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color(0xFF1E3C72),
               Color(0xFF2A5298),
-            ], // Ubah ke gradient yang sama seperti HomeScreen untuk konsistensi
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -104,17 +112,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 children: [
                   ScaleTransition(
                     scale: _scaleAnimation,
-                    child: Icon(
-                      Icons
-                          .restaurant_menu, // Ikon yang lebih relevan dengan kantin
+                    child: const Icon(
+                      Icons.restaurant_menu,
                       size: 150,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ScaleTransition(
                     scale: _scaleAnimation,
-                    child: Text(
+                    child: const Text(
                       'Selamat Datang di E-Kantin!',
                       style: TextStyle(
                         fontSize: 32,
@@ -131,8 +138,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'Pesan makanan favoritmu dengan mudah, cepat, dan aman. Nikmati pengalaman kuliner kampus yang modern!',
                     style: TextStyle(
                       fontSize: 16,
@@ -141,14 +148,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 60),
+                  const SizedBox(height: 60),
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.pushNamed(context, '/login');
                     },
-                    icon: Icon(Icons.arrow_forward_ios),
-
-                    label: Text(
+                    icon: const Icon(Icons.arrow_forward_ios),
+                    label: const Text(
                       'MULAI PESAN SEKARANG',
                       style: TextStyle(
                         fontSize: 18,
@@ -156,21 +162,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.orange, // Ubah warna untuk lebih menarik
+                      backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 60),
+                      minimumSize: const Size(double.infinity, 60),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       elevation: 15,
-                      shadowColor: Colors.orange.withValues(alpha: 0.5),
+                      shadowColor: Colors.orange.withOpacity(0.5),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: const [
                       Icon(Icons.star, color: Colors.yellow, size: 20),
                       SizedBox(width: 5),
                       Text(
