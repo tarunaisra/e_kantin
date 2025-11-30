@@ -18,19 +18,19 @@ class _CartScreenState extends State<CartScreen> {
     },
     {
       'name': 'Sate Kambing',
-      'price': 20000,
+      'price': 35000,
       'quantity': 2,
       'image': 'assets/images/sate_kambing.jpg',
     },
     {
       'name': 'Soto Ayam',
-      'price': 13500,
+      'price': 20000,
       'quantity': 3,
       'image': 'assets/images/soto_ayam.jpg',
     },
     {
       'name': 'Rujak Lontong',
-      'price': 10000,
+      'price': 12000,
       'quantity': 4,
       'image': 'assets/images/rujak_lontong.jpg',
     },
@@ -116,13 +116,17 @@ class _CartScreenState extends State<CartScreen> {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)], // Gradient ungu ke biru gelap (sama seperti LoginScreen, RegisterScreen, dan HomeScreen)
+            colors: [
+              Color(0xFF003366), // Biru Tua
+              Color(0xFF000033), // Biru Sangat Tua
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
+
         child: cartItems.isEmpty
             ? Center(
                 child: Text(
@@ -205,6 +209,22 @@ class _CartScreenState extends State<CartScreen> {
                           onPressed: _proceedToCheckout,
                           child: Text('Checkout'),
                         ),
+                        ElevatedButton(
+                          onPressed: _proceedToCheckout,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Color(0xFF003366),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text('Checkout'),
+                        ),
+
                       ],
                     ),
                   ),

@@ -11,7 +11,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // ---------- DAFTAR PRODUK + GAMBAR ----------
   final List<Map<String, dynamic>> products = [
     {
       'name': 'Nasi Goreng',
@@ -55,10 +54,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ---- APPBAR TRANSPARAN ----
+      // appbar transparan
       appBar: AppBar(
         title: const Text(
-          'e-Kantin',
+          'Menu',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: Colors.transparent,
@@ -115,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(15),
 
-                    // ------------ GAMBAR PRODUK ------------
+                    // gambar dari produk
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.asset(
