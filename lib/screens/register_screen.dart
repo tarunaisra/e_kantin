@@ -46,7 +46,10 @@ class _RegisterScreenState extends State<RegisterScreen>
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade300, Colors.blue.shade900],
+            colors: [
+              Color(0xFF8E2DE2),
+              Color(0xFF4A00E0),
+            ], // Gradient ungu ke biru gelap (sama seperti LoginScreen)
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
