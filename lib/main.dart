@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; 
+import 'firebase_options.dart';
 
 import 'package:smart_ekantin/screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -10,7 +10,6 @@ import 'screens/cart_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inisialisasi Firebase: wajib sebelum memanggil runApp bila menggunakan fitur Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -34,12 +33,15 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen_Yogi(),
         '/register': (context) => const RegisterScreen_Yogi(),
-        '/home': (context) => const HomeScreen_Yogi(),
+        '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
         '/cart': (context) => const CartScreen_taruna(),
       },
     );
   }
 }
+
+
+
 
 // WelcomeScreen yang lebih modern, menarik, dan fokus pada E-Kantin
 class WelcomeScreen extends StatefulWidget {

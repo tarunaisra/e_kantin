@@ -9,10 +9,30 @@ class CartScreen_taruna extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen_taruna> {
   final List<Map<String, dynamic>> cartItems = [
-    {'name': 'Nasi Goreng', 'price': 15000, 'quantity': 1},
-    {'name': 'Sate Kambing', 'price': 20000, 'quantity': 2},
-    {'name': 'Soto Ayam', 'price': 13500, 'quantity': 3},
-    {'name': 'Rujak Lontong', 'price': 10000, 'quantity': 4},
+    {
+      'name': 'Nasi Goreng',
+      'price': 15000,
+      'quantity': 1,
+      'image': 'assets/images/nasi_goreng.jpg',
+    },
+    {
+      'name': 'Sate Kambing',
+      'price': 35000,
+      'quantity': 2,
+      'image': 'assets/images/sate_kambing.jpg',
+    },
+    {
+      'name': 'Soto Ayam',
+      'price': 20000,
+      'quantity': 3,
+      'image': 'assets/images/soto_ayam.jpg',
+    },
+    {
+      'name': 'Rujak Lontong',
+      'price': 12000,
+      'quantity': 4,
+      'image': 'assets/images/rujak_lontong.jpg',
+    },
   ];
 
   String pickupTime = 'Sekarang';
@@ -95,13 +115,17 @@ class _CartScreenState extends State<CartScreen_taruna> {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1E3C72), Color(0xFF2A5298)],
+            colors: [
+              Color(0xFF003366), // Biru Tua
+              Color(0xFF000033), // Biru Sangat Tua
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
+
         child: cartItems.isEmpty
             ? Center(
                 child: Text(
@@ -124,6 +148,19 @@ class _CartScreenState extends State<CartScreen_taruna> {
                         return Card(
                           color: Colors.white.withValues(alpha: 0.1),
                           child: ListTile(
+                            // Tambahkan leading untuk gambar
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(item['image']),
+                              radius: 30, // Ukuran gambar
+                              onBackgroundImageError: (exception, stackTrace) {
+                                // Placeholder jika gambar gagal dimuat
+                                print('Error loading image: $exception');
+                              },
+                              child: Icon(
+                                Icons.fastfood,
+                                color: Colors.white,
+                              ), // Placeholder ikon
+                            ),
                             title: Text(
                               item['name'],
                               style: TextStyle(color: Colors.white),
@@ -171,6 +208,22 @@ class _CartScreenState extends State<CartScreen_taruna> {
                           onPressed: _proceedToCheckout,
                           child: Text('Checkout'),
                         ),
+                        ElevatedButton(
+                          onPressed: _proceedToCheckout,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Color(0xFF003366),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text('Checkout'),
+                        ),
+
                       ],
                     ),
                   ),
@@ -181,6 +234,7 @@ class _CartScreenState extends State<CartScreen_taruna> {
   }
 }
 
+// CheckoutScreen tetap sama, tidak diubah
 class CheckoutScreen extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;
   final double totalPrice;
