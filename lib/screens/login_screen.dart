@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
-import 'home_screen.dart';
-import 'register_screen.dart';
 
 class LoginScreen_Yogi extends StatefulWidget {
   const LoginScreen_Yogi({super.key});
@@ -60,10 +58,6 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Login gagal: $e')));
-    } catch (e) {
-      // fallback
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Login gagal: $e')));
     } finally {
       setState(() => _isLoading_Rapli = false);
     }
@@ -93,48 +87,49 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
                     const Icon(Icons.login, size: 100, color: Colors.white),
                     const SizedBox(height: 40),
 
+                    // ===== Email Input =====
                     TextFormField(
                       controller: _email_Yogi,
                       keyboardType: TextInputType.emailAddress,
                       decoration: input("Email"),
                       style: const TextStyle(color: Colors.black),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) return 'Email tidak boleh kosong';
-                        final emailRegExp = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}\$');
-                        if (!emailRegExp.hasMatch(value.trim())) return 'Format email tidak valid';
-                        return null;
-                      },
+                      validator: _authService_Rapli.validateEmail_Rapli,
                     ),
                     const SizedBox(height: 20),
 
+                    // ===== Password Input =====
                     TextFormField(
                       controller: _password_Yogi,
                       obscureText: true,
                       decoration: input("Password"),
                       style: const TextStyle(color: Colors.black),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'Password tidak boleh kosong';
-                        if (value.length < 6) return 'Password minimal 6 karakter';
-                        return null;
-                      },
+                      validator: _authService_Rapli.validatePassword_Rapli,
                     ),
                     const SizedBox(height: 40),
 
+                    // ===== Tombol Login =====
                     _isLoading_Rapli
                         ? const CircularProgressIndicator(color: Colors.white)
                         : ElevatedButton(
                             onPressed: _login_Rapli,
                             style: button(),
-                            child: const Text("Masuk",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "Masuk",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                           ),
 
                     const SizedBox(height: 20),
+
+                    // ===== Tombol ke Register =====
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/register'),
-                      child: const Text("Belum punya akun? Daftar",
-                          style: TextStyle(color: Colors.white)),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/register'),
+                      child: const Text(
+                        "Belum punya akun? Daftar",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -148,7 +143,7 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
 
   InputDecoration input(String label) => InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white),
+        labelStyle: const TextStyle(color: Colors.white),
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
@@ -157,7 +152,7 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
   ButtonStyle button() => ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.blue,
-        minimumSize: Size(double.infinity, 55),
+        minimumSize: const Size(double.infinity, 55),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         elevation: 10,
       );
