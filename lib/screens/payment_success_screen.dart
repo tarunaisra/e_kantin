@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../widgets/loading_indicator.dart';
 
-class CheckoutScreen_Rapli extends StatelessWidget {
+class CheckoutScreen_Rapli extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems_Rapli;
   final double totalPrice_Rapli;
   final String pickupTime_Rapli;
@@ -13,10 +14,16 @@ class CheckoutScreen_Rapli extends StatelessWidget {
     required this.pickupTime_Rapli,
   });
 
+  @override
+  State<CheckoutScreen_Rapli> createState() => _CheckoutScreen_RapliState();
+}
+
+class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
+  bool _isProcessing_Rapli = false;
+
   void _showPaymentSuccess_Rapli(BuildContext context) {
     // Generate random Order ID
-    final orderId_Rapli =
-        'EK${Random().nextInt(90000) + 10000}'; // EK10000-99999
+    final orderId_Rapli = 'EK${Random().nextInt(90000) + 10000}'; // EK10000-99999
 
     showDialog(
       context: context,
@@ -47,9 +54,7 @@ class CheckoutScreen_Rapli extends StatelessWidget {
             const Text(
               'Pembayaran Berhasil!',
               style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue),
+                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue),
             ),
             const SizedBox(height: 8),
             Text(
@@ -63,25 +68,23 @@ class CheckoutScreen_Rapli extends StatelessWidget {
             // Order ID
             Text(
               'ID Pesanan: $orderId_Rapli',
-              style: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // Total & Pickup
             Text(
-              'Total: Rp ${totalPrice_Rapli.toInt()}',
+              'Total: Rp ${widget.totalPrice_Rapli.toInt()}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Ambil pada: $pickupTime_Rapli',
+              'Ambil pada: ${widget.pickupTime_Rapli}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/home', (route) => false);
+                Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -99,9 +102,34 @@ class CheckoutScreen_Rapli extends StatelessWidget {
     );
   }
 
-  void _confirmOrder_Rapli(BuildContext context) {
-    // Di sini bisa tambahkan logic simpan order ke Firestore jika mau
-    _showPaymentSuccess_Rapli(context);
+  Future<void> _confirmOrder_Rapli(BuildContext context) async {
+    if (_isProcessing_Rapli) return;
+    setState(() => _isProcessing_Rapli = true);
+
+    // show modal loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: SizedBox(height: 80, child: Center(child: LoadingIndicator_Rapli())),
+      ),
+    );
+
+    try {
+      // simulate processing time (here you would call backend / save order)
+      await Future.delayed(const Duration(seconds: 1));
+
+      // dismiss loading
+      Navigator.of(context).pop();
+
+      // show success
+      _showPaymentSuccess_Rapli(context);
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Checkout gagal: $e')));
+    } finally {
+      if (mounted) setState(() => _isProcessing_Rapli = false);
+    }
   }
 
   @override
@@ -112,23 +140,25 @@ class CheckoutScreen_Rapli extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('Pickup: $pickupTime_Rapli'),
+            Text('Pickup: ${widget.pickupTime_Rapli}'),
             const SizedBox(height: 20),
             const Text('Metode: Cash'),
             const Spacer(),
-            Text(
-              'Total: Rp ${totalPrice_Rapli.toInt()}',
-              style: const TextStyle(fontSize: 24),
-            ),
+            Text('Total: Rp ${widget.totalPrice_Rapli.toInt()}', style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _confirmOrder_Rapli(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isProcessing_Rapli ? null : () => _confirmOrder_Rapli(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: _isProcessing_Rapli
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : const Text('Konfirmasi & Bayar'),
               ),
-              child: const Text('Konfirmasi & Bayar'),
             ),
           ],
         ),
