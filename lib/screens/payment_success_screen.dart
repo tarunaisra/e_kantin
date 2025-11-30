@@ -34,12 +34,12 @@ class CheckoutScreen_Rapli extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.green.shade100,
+                color: Colors.blue.shade100,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.check_circle,
-                color: Colors.green.shade700,
+                color: Colors.blue.shade700,
                 size: 80,
               ),
             ),
@@ -49,7 +49,7 @@ class CheckoutScreen_Rapli extends StatelessWidget {
               style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green),
+                  color: Colors.blue),
             ),
             const SizedBox(height: 8),
             Text(
@@ -84,7 +84,7 @@ class CheckoutScreen_Rapli extends StatelessWidget {
                     context, '/home', (route) => false);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
@@ -124,7 +124,7 @@ class CheckoutScreen_Rapli extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _confirmOrder_Rapli(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
               ),
