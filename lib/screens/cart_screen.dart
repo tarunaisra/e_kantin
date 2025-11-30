@@ -8,7 +8,6 @@ class CartScreen_taruna extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen_taruna> {
-
   final List<Map<String, dynamic>> cartItems = [
     {
       'name': 'Nasi Goreng',

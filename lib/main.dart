@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'package:smart_ekantin/screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MyApp());
 }
 
@@ -31,12 +33,13 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen_Yogi(),
         '/register': (context) => const RegisterScreen_Yogi(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
         '/cart': (context) => const CartScreen_taruna(),
       },
     );
   }
 }
+
 
 
 
