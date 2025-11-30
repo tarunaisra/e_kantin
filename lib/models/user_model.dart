@@ -1,4 +1,4 @@
-class UserModel {
+class UserModel { //taruna
   final String userId; // NIM sebagai PK
   final String email;
   final String fullName;

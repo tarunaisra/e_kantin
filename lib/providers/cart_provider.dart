@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 
-class CartProvider extends ChangeNotifier {
-  final List<ProductModel> _cartItems = [];
+class CartProvider_taruna extends ChangeNotifier { 
+  final List<ProductModel_taruna> _cartItems = [];
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  List<ProductModel> get cartItems => _cartItems;
+  List<ProductModel_taruna> get cartItems => _cartItems;
 
-  void addToCart(ProductModel product) {
+  void addToCart(ProductModel_taruna product) {
     _cartItems.add(product);
     notifyListeners();
   }
