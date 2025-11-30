@@ -118,10 +118,7 @@ class _CartScreenState extends State<CartScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF8E2DE2),
-              Color(0xFF4A00E0),
-            ], // Gradient ungu ke biru gelap (sama seperti LoginScreen, RegisterScreen, dan HomeScreen)
+            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)], // Gradient ungu ke biru gelap (sama seperti LoginScreen, RegisterScreen, dan HomeScreen)
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

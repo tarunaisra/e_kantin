@@ -11,12 +11,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // Simulasi daftar produk
-  final List<String> products = [
-    'Nasi Goreng',
-    'Sate Kambing',
-    'Soto Ayam',
-    'Rujak lontong',
+  // ---------- DAFTAR PRODUK + GAMBAR ----------
+  final List<Map<String, dynamic>> products = [
+    {
+      'name': 'Nasi Goreng',
+      'price': 15000,
+      'image': 'assets/images/nasi_goreng.jpg',
+    },
+    {
+      'name': 'Sate Kambing',
+      'price': 35000,
+      'image': 'assets/images/sate_kambing.jpg',
+    },
+    {
+      'name': 'Soto Ayam',
+      'price': 20000,
+      'image': 'assets/images/soto_ayam.jpg',
+    },
+    {
+      'name': 'Rujak Lontong',
+      'price': 12000,
+      'image': 'assets/images/rujak_lontong.jpg',
+    },
   ];
 
   @override
@@ -39,31 +55,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ---- APPBAR TRANSPARAN ----
       appBar: AppBar(
-        title: Text('Beranda'),
-        backgroundColor: Colors.blue.shade900,
+        title: const Text(
+          'e-Kantin',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {
               Navigator.pushNamed(context, '/cart');
             },
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/login');
             },
           ),
         ],
       ),
+      extendBodyBehindAppBar: true,
+
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF8E2DE2),
-              Color(0xFF4A00E0),
-            ], // Gradient ungu ke biru gelap (sama seperti LoginScreen dan RegisterScreen)
+            colors: [Color(0xFF003366), Color(0xFF000033)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -71,46 +92,74 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: FadeTransition(
           opacity: _animation,
           child: ListView.builder(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + kToolbarHeight + 25,
+              left: 20,
+              right: 20,
+              bottom: 20,
+            ),
             itemCount: products.length,
             itemBuilder: (context, index) {
-              return Card(
-                color: Colors.white.withValues(alpha: 0.1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ListTile(
-                  leading: Icon(Icons.shopping_bag, color: Colors.white),
-                  title: Text(
-                    products[index],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+              final product = products[index];
+              final price =
+                  'Rp ${product['price'].toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: Card(
+                  color: Colors.white.withOpacity(0.08),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: BorderSide(color: Colors.white.withOpacity(0.2)),
                   ),
-                  subtitle: Text(
-                    'Harga: Rp ${(index + 1) * 10000}',
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      // Simulasi tambah ke cart
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '${products[index]} ditambahkan ke keranjang',
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(15),
+
+                    // ------------ GAMBAR PRODUK ------------
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        product['image'],
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    child: const Text('Tambah'),
+
+                    title: Text(
+                      product['name'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Harga: $price',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+
+                    trailing: ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${product['name']} ditambahkan ke keranjang',
+                            ),
+                            backgroundColor: const Color(0xFF003366),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF003366),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 5,
+                      ),
+                      child: const Text('Tambah'),
+                    ),
                   ),
                 ),
               );

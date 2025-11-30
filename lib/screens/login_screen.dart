@@ -39,138 +39,159 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        // --- LATAR BELAKANG PROFESIONAL BARU (SAMA DENGAN REGISTER) ---
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF8E2DE2),
-              Color(0xFF4A00E0),
-            ], // Gradient ungu ke biru gelap (keren dan modern)
+              Color(0xFF003366), // Biru Tua (Navy)
+              Color(0xFF000033), // Biru Sangat Tua
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
+        // -----------------------------------------------------------
         child: FadeTransition(
           opacity: _animation,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.login, size: 100, color: Colors.white),
-                  SizedBox(height: 20),
-                  Text(
-                    'Masuk',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  TextField(
-                    controller: _emailController,
-                    keyboardType:
-                        TextInputType.emailAddress, // Pastikan keyboard muncul
-                    cursorColor: Colors.white, // Kursor putih untuk visibilitas
-                    onChanged: (value) {
-                      // Opsional: Debug input
-                      if (kDebugMode) print('Email: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(
-                        alpha: 0.8,
-                      ), // Lebih terang agar input terlihat
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                          width: 1,
-                        ), // Border putih untuk kontras
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.black,
-                    ), // Teks hitam untuk kontras pada background putih
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    keyboardType: TextInputType
-                        .visiblePassword, // Keyboard untuk password
-                    cursorColor: Colors.white,
-                    onChanged: (value) {
-                      // Opsional: Debug input
-                      if (kDebugMode) print('Password: $value');
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: Colors.white.withValues(
-                        alpha: 0.8,
-                      ), // Sama seperti di atas
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.black), // Teks hitam
-                  ),
-                  SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Simulasi login berhasil, navigasi ke home
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue,
-                      minimumSize: Size(double.infinity, 55),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 10,
-                    ),
-                    child: Text(
-                      'Masuk',
+              child: SingleChildScrollView(
+                // Ditambahkan agar aman saat keyboard muncul
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.login, size: 100, color: Colors.white),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Selamat Datang',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: Text(
-                      'Belum punya akun? Daftar',
-                      style: TextStyle(color: Colors.white),
+                    const SizedBox(height: 40),
+
+                    // --- Field Email ---
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      cursorColor: Colors.white,
+                      onChanged: (value) {
+                        if (kDebugMode) print('Email: $value');
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+                        fillColor: Colors.white.withOpacity(0.8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.black),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+
+                    // --- Field Password ---
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      cursorColor: Colors.white,
+                      onChanged: (value) {
+                        if (kDebugMode) print('Password: $value');
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+                        fillColor: Colors.white.withOpacity(0.8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 40),
+
+                    // --- Tombol Masuk ---
+                    ElevatedButton(
+                      onPressed: () {
+                        // Simulasi login berhasil, navigasi ke home
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        // Warna teks disesuaikan dengan gradient baru
+                        foregroundColor: const Color(0xFF003366),
+                        minimumSize: const Size(double.infinity, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 10,
+                      ),
+                      child: const Text(
+                        'Masuk',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // --- Tombol Daftar ---
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      child: const Text(
+                        'Belum punya akun? Daftar',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
