@@ -65,7 +65,12 @@ flutter:
     - assets/images/login_bg.jpg
     - assets/images/home_icon.png
     - assets/images/cart_icon.png
+    - assets/images/nasi_goreng.jpg
+    - assets/images/rujak_lontong.jpg
+    - assets/images/sate_kambing.jpg
+    - assets/images/soto_ayam.jpg
     - assets/icons/registrasi_icon.svg
+    -
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

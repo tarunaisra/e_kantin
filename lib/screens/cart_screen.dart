@@ -8,11 +8,32 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  // Tambahkan field 'image' ke setiap item
   final List<Map<String, dynamic>> cartItems = [
-    {'name': 'Nasi Goreng', 'price': 15000, 'quantity': 1},
-    {'name': 'Sate Kambing', 'price': 20000, 'quantity': 2},
-    {'name': 'Soto Ayam', 'price': 13500, 'quantity': 3},
-    {'name': 'Rujak Lontong', 'price': 10000, 'quantity': 4},
+    {
+      'name': 'Nasi Goreng',
+      'price': 15000,
+      'quantity': 1,
+      'image': 'assets/images/nasi_goreng.jpg',
+    },
+    {
+      'name': 'Sate Kambing',
+      'price': 20000,
+      'quantity': 2,
+      'image': 'assets/images/sate_kambing.jpg',
+    },
+    {
+      'name': 'Soto Ayam',
+      'price': 13500,
+      'quantity': 3,
+      'image': 'assets/images/soto_ayam.jpg',
+    },
+    {
+      'name': 'Rujak Lontong',
+      'price': 10000,
+      'quantity': 4,
+      'image': 'assets/images/rujak_lontong.jpg',
+    },
   ];
 
   String pickupTime = 'Sekarang';
@@ -124,6 +145,19 @@ class _CartScreenState extends State<CartScreen> {
                         return Card(
                           color: Colors.white.withValues(alpha: 0.1),
                           child: ListTile(
+                            // Tambahkan leading untuk gambar
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(item['image']),
+                              radius: 30, // Ukuran gambar
+                              onBackgroundImageError: (exception, stackTrace) {
+                                // Placeholder jika gambar gagal dimuat
+                                print('Error loading image: $exception');
+                              },
+                              child: Icon(
+                                Icons.fastfood,
+                                color: Colors.white,
+                              ), // Placeholder ikon
+                            ),
                             title: Text(
                               item['name'],
                               style: TextStyle(color: Colors.white),
@@ -181,6 +215,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
+// CheckoutScreen tetap sama, tidak diubah
 class CheckoutScreen extends StatelessWidget {
   final List<Map<String, dynamic>> cartItems;
   final double totalPrice;
