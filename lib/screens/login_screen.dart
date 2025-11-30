@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 
@@ -18,8 +18,8 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
 
   final TextEditingController _email_Yogi = TextEditingController();
   final TextEditingController _password_Yogi = TextEditingController();
-
-  final FirebaseAuth _auth_Rapli = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
   bool _isLoading_Rapli = false;
 
   @override
@@ -42,26 +42,31 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
   }
 
   Future<void> _login_Rapli() async {
-    String email = _email_Yogi.text.trim();
-    String password = _password_Yogi.text.trim();
+    if (!_formKey.currentState!.validate()) return;
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Email & Password tidak boleh kosong")));
-      return;
-    }
+    final String email = _email_Yogi.text.trim();
+    final String password = _password_Yogi.text.trim();
 
     setState(() => _isLoading_Rapli = true);
 
     try {
-      await _auth_Rapli.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacementNamed(context, '/home');
-    } on FirebaseAuthException catch (e) {
+      final user = await _authService_Rapli.signInUser_Rapli(email, password);
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Login gagal')));
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message ?? "Login gagal")));
+          .showSnackBar(SnackBar(content: Text('Login gagal: $e')));
+    } catch (e) {
+      // fallback
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Login gagal: $e')));
+    } finally {
+      setState(() => _isLoading_Rapli = false);
     }
-
-    setState(() => _isLoading_Rapli = false);
   }
 
   @override
@@ -80,44 +85,59 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.login, size: 100, color: Colors.white),
-                  SizedBox(height: 40),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.login, size: 100, color: Colors.white),
+                    const SizedBox(height: 40),
 
-                  TextField(
-                    controller: _email_Yogi,
-                    decoration: input("Email"),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 20),
+                    TextFormField(
+                      controller: _email_Yogi,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: input("Email"),
+                      style: const TextStyle(color: Colors.black),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) return 'Email tidak boleh kosong';
+                        final emailRegExp = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}\$');
+                        if (!emailRegExp.hasMatch(value.trim())) return 'Format email tidak valid';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
 
-                  TextField(
-                    controller: _password_Yogi,
-                    obscureText: true,
-                    decoration: input("Password"),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(height: 40),
+                    TextFormField(
+                      controller: _password_Yogi,
+                      obscureText: true,
+                      decoration: input("Password"),
+                      style: const TextStyle(color: Colors.black),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Password tidak boleh kosong';
+                        if (value.length < 6) return 'Password minimal 6 karakter';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 40),
 
-                  _isLoading_Rapli
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : ElevatedButton(
-                          onPressed: _login_Rapli,
-                          style: button(),
-                          child: Text("Masuk",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                        ),
+                    _isLoading_Rapli
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : ElevatedButton(
+                            onPressed: _login_Rapli,
+                            style: button(),
+                            child: const Text("Masuk",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
 
-                  SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, '/register'),
-                    child: Text("Belum punya akun? Daftar",
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    TextButton(
+                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                      child: const Text("Belum punya akun? Daftar",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

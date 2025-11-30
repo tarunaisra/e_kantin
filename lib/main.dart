@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'package:smart_ekantin/screens/home_screen.dart';
+import 'services/seed_services.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/cart_screen.dart';
@@ -13,6 +15,18 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Dev-only: seed Firestore with sample products for local development
+  if (kDebugMode) {
+    try {
+      await SeedService().seedProducts();
+      // ignore: avoid_print
+      print('Dev seed: products seeded');
+    } catch (e) {
+      // ignore: avoid_print
+      print('Dev seed failed: $e');
+    }
+  }
 
   runApp(const MyApp());
 }
