@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_success_screen.dart'; // pastikan file ini sudah ada
 
 class CartScreen_taruna extends StatefulWidget { 
   const CartScreen_taruna({super.key});
@@ -8,7 +9,7 @@ class CartScreen_taruna extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen_taruna> {
-  final List<Map<String, dynamic>> cartItems = [
+  final List<Map<String, dynamic>> cartItems_taruna = [
     {
       'name': 'Nasi Goreng',
       'price': 15000,
@@ -35,40 +36,40 @@ class _CartScreenState extends State<CartScreen_taruna> {
     },
   ];
 
-  String pickupTime = 'Sekarang';
-  final List<String> pickupOptions = ['Sekarang', '12:00', '12:30', '13:00'];
+  String pickupTime_taruna = 'Sekarang';
+  final List<String> pickupOptions_taruna = ['Sekarang', '12:00', '12:30', '13:00'];
 
-  double get totalPrice => cartItems.fold(
+  double get totalPrice_taruna => cartItems_taruna.fold(
     0,
     (sum, item) => sum + (item['price'] * item['quantity']),
   );
 
-  void _incrementQuantity(int index) {
-    setState(() => cartItems[index]['quantity']++);
+  void _incrementQuantity_taruna(int index) {
+    setState(() => cartItems_taruna[index]['quantity']++);
   }
 
-  void _decrementQuantity(int index) {
+  void _decrementQuantity_taruna(int index) {
     setState(() {
-      if (cartItems[index]['quantity'] > 1) cartItems[index]['quantity']--;
+      if (cartItems_taruna[index]['quantity'] > 1) cartItems_taruna[index]['quantity']--;
     });
   }
 
-  void _removeItem(int index) {
-    setState(() => cartItems.removeAt(index));
+  void _removeItem_taruna(int index) {
+    setState(() => cartItems_taruna.removeAt(index));
   }
 
-  void _selectPickupTime(String time) {
-    setState(() => pickupTime = time);
+  void _selectPickupTime_taruna(String time) {
+    setState(() => pickupTime_taruna = time);
   }
 
-  void _proceedToCheckout() {
+  void _proceedToCheckout_taruna() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckoutScreen(
-          cartItems: cartItems,
-          totalPrice: totalPrice,
-          pickupTime: pickupTime,
+        builder: (context) => CheckoutScreen_Rapli(
+          cartItems_Rapli: cartItems_taruna,
+          totalPrice_Rapli: totalPrice_taruna,
+          pickupTime_Rapli: pickupTime_taruna,
         ),
       ),
     );
@@ -78,29 +79,29 @@ class _CartScreenState extends State<CartScreen_taruna> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pesanan Saya'),
+        title: const Text('Pesanan Saya'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.access_time, color: Colors.white),
+            icon: const Icon(Icons.access_time, color: Colors.white),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text('Pilih Waktu Ambil'),
+                  title: const Text('Pilih Waktu Ambil'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: pickupOptions
+                    children: pickupOptions_taruna
                         .map(
                           (option) => ListTile(
                             title: Text(option),
                             onTap: () {
-                              _selectPickupTime(option);
+                              _selectPickupTime_taruna(option);
                               Navigator.pop(context);
                             },
                           ),
@@ -118,16 +119,15 @@ class _CartScreenState extends State<CartScreen_taruna> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF003366), // Biru Tua
-              Color(0xFF000033), // Biru Sangat Tua
+              Color(0xFF003366),
+              Color(0xFF000033),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-
-        child: cartItems.isEmpty
-            ? Center(
+        child: cartItems_taruna.isEmpty
+            ? const Center(
                 child: Text(
                   'Keranjang kosong',
                   style: TextStyle(color: Colors.white, fontSize: 18),
@@ -142,51 +142,49 @@ class _CartScreenState extends State<CartScreen_taruna> {
                         left: 16,
                         right: 16,
                       ),
-                      itemCount: cartItems.length,
+                      itemCount: cartItems_taruna.length,
                       itemBuilder: (context, index) {
-                        final item = cartItems[index];
+                        final item = cartItems_taruna[index];
                         return Card(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: Colors.white.withOpacity(0.1),
                           child: ListTile(
-                            // Tambahkan leading untuk gambar
                             leading: CircleAvatar(
                               backgroundImage: AssetImage(item['image']),
-                              radius: 30, // Ukuran gambar
+                              radius: 30,
                               onBackgroundImageError: (exception, stackTrace) {
-                                // Placeholder jika gambar gagal dimuat
                                 print('Error loading image: $exception');
                               },
-                              child: Icon(
+                              child: const Icon(
                                 Icons.fastfood,
                                 color: Colors.white,
-                              ), // Placeholder ikon
+                              ),
                             ),
                             title: Text(
                               item['name'],
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                             subtitle: Text(
                               'Rp ${item['price']}',
-                              style: TextStyle(color: Colors.white70),
+                              style: const TextStyle(color: Colors.white70),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.remove, color: Colors.white),
-                                  onPressed: () => _decrementQuantity(index),
+                                  icon: const Icon(Icons.remove, color: Colors.white),
+                                  onPressed: () => _decrementQuantity_taruna(index),
                                 ),
                                 Text(
                                   '${item['quantity']}',
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.add, color: Colors.white),
-                                  onPressed: () => _incrementQuantity(index),
+                                  icon: const Icon(Icons.add, color: Colors.white),
+                                  onPressed: () => _incrementQuantity_taruna(index),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _removeItem(index),
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _removeItem_taruna(index),
                                 ),
                               ],
                             ),
@@ -196,90 +194,34 @@ class _CartScreenState extends State<CartScreen_taruna> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total: Rp ${totalPrice.toInt()}',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                          'Total: Rp ${totalPrice_taruna.toInt()}',
+                          style: const TextStyle(color: Colors.white, fontSize: 18),
                         ),
                         ElevatedButton(
-                          onPressed: _proceedToCheckout,
-                          child: Text('Checkout'),
-                        ),
-                        ElevatedButton(
-                          onPressed: _proceedToCheckout,
+                          onPressed: _proceedToCheckout_taruna,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: Color(0xFF003366),
+                            foregroundColor: const Color(0xFF003366),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 24,
                               vertical: 12,
                             ),
                           ),
                           child: const Text('Checkout'),
                         ),
-
                       ],
                     ),
                   ),
                 ],
               ),
-      ),
-    );
-  }
-}
-
-// CheckoutScreen tetap sama, tidak diubah
-class CheckoutScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> cartItems;
-  final double totalPrice;
-  final String pickupTime;
-
-  const CheckoutScreen({
-    super.key,
-    required this.cartItems,
-    required this.totalPrice,
-    required this.pickupTime,
-  });
-
-  void _confirmOrder(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Pesanan dikonfirmasi! Bayar cash saat pickup pada $pickupTime.',
-        ),
-      ),
-    );
-    Navigator.popUntil(context, (route) => route.isFirst);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Konfirmasi Pesanan')),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text('Pickup: $pickupTime'),
-            SizedBox(height: 20),
-            Text('Metode: Cash'),
-            Spacer(),
-            Text(
-              'Total: Rp ${totalPrice.toInt()}',
-              style: TextStyle(fontSize: 24),
-            ),
-            ElevatedButton(
-              onPressed: () => _confirmOrder(context),
-              child: Text('Konfirmasi'),
-            ),
-          ],
-        ),
       ),
     );
   }
