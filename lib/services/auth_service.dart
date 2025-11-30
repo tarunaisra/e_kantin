@@ -1,4 +1,4 @@
-// File: lib/services/auth_service_rapli.dart
+// File: lib/services/auth_service.dart
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +9,7 @@ class AuthService_Rapli {
   final FirebaseAuth _auth_Rap = FirebaseAuth.instance;
   final FirebaseFirestore _firestore_Rap = FirebaseFirestore.instance;
 
-  // 1. Fungsi Validasi Email Domain Kampus (Watermark Code Rapli)
+  // Fungsi Validasi Email Domain Kampu
   String? validateEmail_Rapli(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email tidak boleh kosong';
@@ -25,7 +25,7 @@ class AuthService_Rapli {
     return null;
   }
 
-  // 2. Fungsi Validasi Password (> 6 Char) (Watermark Code Rapli)
+  // 2. Fungsi Validasi Password (> 6 Char) 
   String? validatePassword_Rapli(String? value) {
     if (value == null || value.length <= 6) {
       return 'Password harus lebih dari 6 karakter (Min. 7 Karakter)';
@@ -33,7 +33,7 @@ class AuthService_Rapli {
     return null;
   }
 
-  // 3. Logika Login (Watermark Code Rapli)
+  // 3. Logika Login 
   Future<User?> signInUser_Rapli(String email, String password) async {
     try {
       UserCredential usercredentialR = await _auth_Rap
@@ -45,7 +45,7 @@ class AuthService_Rapli {
     }
   }
 
-  // 4. Logika Register (Watermark Code Rapli)
+  // 4. Logika Registe
   Future<User?> registerUser_Rapli({
     required String email,
     required String password,
@@ -74,7 +74,7 @@ class AuthService_Rapli {
     }
   }
 
-  // 5. Ambil NIM berdasarkan Email (Watermark Code Rapli)
+  // 5. Ambil NIM berdasarkan Email 
   Future<String?> getUserNimByEmail_Rapli(String email) async {
     try {
       final querySnapshot = await _firestore_Rap
