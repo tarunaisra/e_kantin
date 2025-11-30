@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen_Yogi(),
         '/register': (context) => const RegisterScreen_Yogi(),
         '/home': (context) => const HomeScreen(),
-        '/cart': (context) => const CartScreen(),
+        '/cart': (context) => const CartScreen_taruna(),
       },
     );
   }
