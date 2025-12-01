@@ -8,6 +8,7 @@ import 'services/seed_services.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/cart_screen.dart';
+import 'widgets/loading_indicator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen_Yogi(),
         '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
         '/cart': (context) => const CartScreen_taruna(),
+        LoadingIndicator_Rapli.routeName_Rapli: (context) => const LoadingIndicator_Rapli(),
       },
     );
   }
