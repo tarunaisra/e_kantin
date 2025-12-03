@@ -91,22 +91,81 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 20),
 
-                      TextFormField(
-                        controller: _name_Yogi,
-                        validator: (value) =>
-                            value!.isEmpty ? "Nama tidak boleh kosong" : null,
-                        decoration: _inputStyle_Yogi("Nama Lengkap"),
-                        style: const TextStyle(color: Colors.black),
+                    // --- Field Password ---
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      cursorColor: Colors.white,
+                      onChanged: (value) {
+                        if (kDebugMode) print('Password: $value');
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        
+                        fillColor: Colors.white.withOpacity(0.8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
 
-                      TextFormField(
-                        controller: _email_Yogi,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) =>
-                            _authService_Rapli.validateEmail_Rapli(value),
-                        decoration: _inputStyle_Yogi("Email"),
-                        style: const TextStyle(color: Colors.black),
+                    // konfim password
+                    TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      cursorColor: Colors.white,
+                      onChanged: (value) {
+                        if (kDebugMode) print('Konfirmasi Password: $value');
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Konfirmasi Password',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+                        fillColor: Colors.white.withOpacity(0.8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
 

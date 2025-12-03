@@ -68,6 +68,7 @@ class _CartScreenState extends State<CartScreen_taruna> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pesanan Saya'),
+
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
