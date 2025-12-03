@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 import 'package:smart_ekantin/screens/home_screen.dart';
@@ -9,6 +10,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/cart_screen.dart';
 import 'widgets/loading_indicator.dart';
+import 'providers/cart_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,21 +39,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'E-Kantin',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CartProvider_taruna(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'E-Kantin',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: const WelcomeScreen(),
+        routes: {
+          '/login': (context) => const LoginScreen_Yogi(),
+          '/register': (context) => const RegisterScreen_Yogi(),
+          '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
+          '/cart': (context) => const CartScreen_taruna(),
+          LoadingIndicator_Rapli.routeName_Rapli: (context) => const LoadingIndicator_Rapli(),
+        },
       ),
-      home: const WelcomeScreen(),
-      routes: {
-        '/login': (context) => const LoginScreen_Yogi(),
-        '/register': (context) => const RegisterScreen_Yogi(),
-        '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
-        '/cart': (context) => const CartScreen_taruna(),
-        LoadingIndicator_Rapli.routeName_Rapli: (context) => const LoadingIndicator_Rapli(),
-      },
     );
   }
 }
