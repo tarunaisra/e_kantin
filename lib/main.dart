@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// WelcomeScreen yang lebih modern, menarik, dan fokus pada E-Kantin
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
