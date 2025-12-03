@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // --- LATAR BELAKANG PROFESIONAL BARU (SAMA DENGAN REGISTER) ---
+        //latar belakang
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
             end: Alignment.bottomCenter,
           ),
         ),
-        // -----------------------------------------------------------
+
         child: FadeTransition(
           opacity: _animation,
           child: Center(
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 40),
 
-                    // --- Field Email ---
+                    // ngisi email
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>
                         labelText: 'Email',
                         labelStyle: const TextStyle(color: Colors.white),
                         filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+                        
                         fillColor: Colors.white.withOpacity(0.8),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // --- Field Password ---
+                    // isi password
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen>
                         labelText: 'Password',
                         labelStyle: const TextStyle(color: Colors.white),
                         filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+
                         fillColor: Colors.white.withOpacity(0.8),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 40),
 
-                    // --- Tombol Masuk ---
+                    // tombol masuk
                     ElevatedButton(
                       onPressed: () {
                         // Simulasi login berhasil, navigasi ke home
@@ -162,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen>
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        // Warna teks disesuaikan dengan gradient baru
                         foregroundColor: const Color(0xFF003366),
                         minimumSize: const Size(double.infinity, 55),
                         shape: RoundedRectangleBorder(
@@ -180,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // --- Tombol Daftar ---
+                    // Tombol Daftar
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/register');
