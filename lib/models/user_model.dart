@@ -1,18 +1,18 @@
-class UserModel { //taruna
+class UserModel_taruna { 
   final String userId; // NIM sebagai PK
   final String email;
   final String fullName;
   final String password;
 
-  UserModel({
+  UserModel_taruna({
     required this.userId,
     required this.email,
     required this.fullName,
     required this.password,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
+  factory UserModel_taruna.fromJson(Map<String, dynamic> json) {
+    return UserModel_taruna(
       userId: json['user_id'],
       email: json['email'],
       fullName: json['full_name'],

@@ -12,7 +12,7 @@ import 'screens/cart_screen.dart';
 import 'widgets/loading_indicator.dart';
 import 'providers/cart_provider.dart';
 
-Future<void> main() async {
+Future<void> main_taruna() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
