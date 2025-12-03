@@ -69,7 +69,7 @@ class CartProvider_taruna extends ChangeNotifier {
   }
 
   // Checkout dengan update stok + save transaction ke Firestore
-  Future<String> checkout_taruna({
+  Future<Map<String, dynamic>> checkout_taruna({
     required String nim,
     required String pickupTime,
   }) async {
@@ -77,25 +77,43 @@ class CartProvider_taruna extends ChangeNotifier {
       // Generate Transaction ID
       final trxId = 'TRX${DateTime.now().millisecondsSinceEpoch}${Random().nextInt(1000)}';
 
-      // Prepare items list untuk transaction
-      final itemsForTransaction = _cartItems
-          .map((item) => {
-                'product_id': item.productId,
-                'name': item.name,
-                'price': item.price,
-                'quantity': 1, // Setiap item di cart dihitung 1 qty
-              })
-          .toList();
+      // Group items by productId to compute quantities
+      final Map<String, Map<String, dynamic>> grouped = {};
+      for (var item in _cartItems) {
+        final key = item.productId;
+        if (!grouped.containsKey(key)) {
+          grouped[key] = {
+            'product': item,
+            'quantity': 1,
+          };
+        } else {
+          grouped[key]!['quantity'] = grouped[key]!['quantity'] + 1;
+        }
+      }
+
+      // Prepare items list untuk transaction dengan quantity
+      final itemsForTransaction = grouped.values.map((e) {
+        final ProductModel_taruna p = e['product'];
+        final int q = e['quantity'];
+        return {
+          'product_id': p.productId,
+          'name': p.name,
+          'price': p.price,
+          'quantity': q,
+        };
+      }).toList();
 
       final finalPrice = getFinalPrice_taruna(nim);
 
       // Gunakan transaction untuk atomic write (update stok + save transaksi)
       await _db.runTransaction((transaction) async {
-        // 1. Update stok untuk setiap produk
-        for (var item in _cartItems) {
-          DocumentReference productRef = _db.collection('products').doc(item.productId);
+        // 1. Update stok untuk setiap produk (aggregate by quantity)
+        for (var entry in grouped.entries) {
+          final productId = entry.key;
+          final int qty = entry.value['quantity'];
+          DocumentReference productRef = _db.collection('products').doc(productId);
           transaction.update(productRef, {
-            'stock': FieldValue.increment(-1),
+            'stock': FieldValue.increment(-qty),
           });
         }
 
@@ -110,15 +128,21 @@ class CartProvider_taruna extends ChangeNotifier {
           pickupTime: pickupTime,
         );
 
-        DocumentReference transactionRef =
-            _db.collection('transactions').doc(trxId);
+        DocumentReference transactionRef = _db.collection('transactions').doc(trxId);
         transaction.set(transactionRef, transactionModel.toJson());
       });
+
+      // Simpan data yang akan dikembalikan sebelum mengosongkan cart
+      final result = {
+        'trxId': trxId,
+        'finalPrice': finalPrice,
+        'items': itemsForTransaction,
+      };
 
       // Jika berhasil, clear cart
       clearCart();
       print('Checkout berhasil! Trx ID: $trxId');
-      return trxId; // Return transaction ID untuk ditampilkan di success dialog
+      return result; // Return transaction info untuk digunakan oleh UI
     } catch (e) {
       print('Error saat checkout: $e');
       rethrow;

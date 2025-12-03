@@ -112,8 +112,17 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
     );
 
     try {
+      // Quick guard: if cart empty or total is 0, abort and inform user
+      if (provider.totalPrice <= 0) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Keranjang kosong. Tambahkan produk sebelum checkout.'),
+          backgroundColor: Colors.orange,
+        ));
+        return;
+      }
       // Call real checkout from provider (save to Firestore + update stok)
-      final trxId_Rapli = await provider.checkout_taruna(
+      final result = await provider.checkout_taruna(
         nim: widget.nim_Rapli,
         pickupTime: widget.pickupTime_Rapli,
       );
@@ -121,9 +130,12 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
       // dismiss loading
       Navigator.of(context).pop();
 
-      // show success dengan final price
-      final finalPrice = provider.getFinalPrice_taruna(widget.nim_Rapli);
-      _showPaymentSuccess_Rapli(context, trxId_Rapli, finalPrice);
+      // result contains trxId and finalPrice (we captured finalPrice before clearing cart)
+      final trxId_Rapli = (result['trxId'] ?? '') as String;
+      final finalPriceFromResult = (result['finalPrice'] ?? 0.0) as double;
+
+      // show success dengan final price (use captured value)
+      _showPaymentSuccess_Rapli(context, trxId_Rapli, finalPriceFromResult);
     } catch (e) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
