@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import '../services/auth_service.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+/// Register Screen (UI: Yogi, Auth: Rapli)
+class RegisterScreen_Yogi extends StatefulWidget {
+  const RegisterScreen_Yogi({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterScreen_Yogi> createState() => _RegisterScreenState_Yogi();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
+class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
+  final GlobalKey<FormState> _formKey_Yogi = GlobalKey<FormState>();
+
+  final TextEditingController _name_Yogi = TextEditingController();
+  final TextEditingController _email_Yogi = TextEditingController();
+  final TextEditingController _password_Yogi = TextEditingController();
+  final TextEditingController _confirmPassword_Yogi = TextEditingController();
+  final TextEditingController _nim_Yogi = TextEditingController();
+
+  bool _isLoading_Yogi = false;
 
   @override
   void initState() {
@@ -33,10 +39,11 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   void dispose() {
     _controller.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _name_Yogi.dispose();
+    _email_Yogi.dispose();
+    _password_Yogi.dispose();
+    _confirmPassword_Yogi.dispose();
+    _nim_Yogi.dispose();
     super.dispose();
   }
 
@@ -44,123 +51,45 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // --- LATAR BELAKANG PROFESIONAL BARU ---
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF003366), // Biru Tua (Navy)
-              Color(0xFF000033), // Biru Sangat Tua
-            ],
+            colors: [Color(0xFF003366), Color(0xFF000033)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        // -------------------------------------
         child: FadeTransition(
           opacity: _animation,
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                // Tambahkan SingleChildScrollView agar keyboard tidak menyebabkan overflow
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.person_add,
-                      size: 100,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Daftar Akun', // Ubah teks menjadi lebih formal
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey_Yogi,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.person_add, size: 100, color: Colors.white),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Daftar Akun',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 40),
+                      const SizedBox(height: 40),
 
-                    // --- Field Nama ---
-                    TextField(
-                      controller: _nameController,
-                      keyboardType: TextInputType.name,
-                      cursorColor: Colors.white,
-                      onChanged: (value) {
-                        if (kDebugMode) print('Nama: $value');
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Nama Lengkap',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
-                        fillColor: Colors.white.withOpacity(0.8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          ),
-                        ),
+                      TextFormField(
+                        controller: _nim_Yogi,
+                        keyboardType: TextInputType.number,
+                        validator: (value) =>
+                            value!.isEmpty ? "NIM tidak boleh kosong" : null,
+                        decoration: _inputStyle_Yogi("NIM"),
+                        style: const TextStyle(color: Colors.black),
                       ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // --- Field Email ---
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      cursorColor: Colors.white,
-                      onChanged: (value) {
-                        if (kDebugMode) print('Email: $value');
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
-                        fillColor: Colors.white.withOpacity(0.8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                     // --- Field Password ---
                     TextField(
@@ -199,9 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                           ),
                         ),
                       ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                     // konfim password
                     TextField(
@@ -240,53 +167,110 @@ class _RegisterScreenState extends State<RegisterScreen>
                           ),
                         ),
                       ),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    const SizedBox(height: 40),
+                      const SizedBox(height: 20),
 
-                    // --- Tombol Daftar ---
-                    ElevatedButton(
-                      onPressed: () {
-                        // Simulasi registrasi berhasil, navigasi ke login
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(
-                          0xFF003366,
-                        ), // Warna teks sesuai gradient baru
-                        minimumSize: const Size(double.infinity, 55),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 10,
+                      TextFormField(
+                        controller: _password_Yogi,
+                        obscureText: true,
+                        validator: (value) =>
+                            _authService_Rapli.validatePassword_Rapli(value),
+                        decoration: _inputStyle_Yogi("Password"),
+                        style: const TextStyle(color: Colors.black),
                       ),
-                      child: const Text(
-                        'Daftar Sekarang',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    // --- Tombol Masuk ---
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      child: const Text(
-                        'Sudah punya akun? Masuk',
-                        style: TextStyle(color: Colors.white),
+                      TextFormField(
+                        controller: _confirmPassword_Yogi,
+                        obscureText: true,
+                        validator: (value) {
+                          if (value != _password_Yogi.text) {
+                            return "Konfirmasi password tidak cocok";
+                          }
+                          return null;
+                        },
+                        decoration: _inputStyle_Yogi("Konfirmasi Password"),
+                        style: const TextStyle(color: Colors.black),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 40),
+
+                      _isLoading_Yogi
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey_Yogi.currentState!.validate()) {
+                                  setState(() => _isLoading_Yogi = true);
+
+                                  final user =
+                                      await _authService_Rapli.registerUser_Rapli(
+                                    email: _email_Yogi.text.trim(),
+                                    password: _password_Yogi.text.trim(),
+                                    nim: _nim_Yogi.text.trim(),
+                                    fullName: _name_Yogi.text.trim(),
+                                  );
+
+                                  setState(() => _isLoading_Yogi = false);
+
+                                  if (user != null) {
+                                    Navigator.pushReplacementNamed(
+                                        context, '/login'); // ← Sesuai tugas
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Registrasi gagal, coba lagi."),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: const Color(0xFF003366),
+                                minimumSize: const Size(double.infinity, 55),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 10,
+                              ),
+                              child: const Text(
+                                'Daftar Sekarang',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                      const SizedBox(height: 20),
+
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pushReplacementNamed(context, '/login'),
+                        child: const Text(
+                          "Sudah punya akun? Masuk",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  InputDecoration _inputStyle_Yogi(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.8),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(color: Colors.white, width: 2),
       ),
     );
   }

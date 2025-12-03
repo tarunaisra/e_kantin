@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import '../services/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen_Yogi extends StatefulWidget {
+  const LoginScreen_Yogi({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreen_Yogi> createState() => _LoginScreen_YogiState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _email_Yogi = TextEditingController();
+  final TextEditingController _password_Yogi = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
+  bool _isLoading_Rapli = false;
 
   @override
   void initState() {
@@ -30,9 +33,33 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     _controller.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _email_Yogi.dispose();
+    _password_Yogi.dispose();
     super.dispose();
+  }
+
+  Future<void> _login_Rapli() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final String email = _email_Yogi.text.trim();
+    final String password = _password_Yogi.text.trim();
+
+    setState(() => _isLoading_Rapli = true);
+
+    try {
+      final user = await _authService_Rapli.signInUser_Rapli(email, password);
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Login gagal')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Login gagal: $e')));
+    } finally {
+      setState(() => _isLoading_Rapli = false);
+    }
   }
 
   @override
@@ -62,15 +89,6 @@ class _LoginScreenState extends State<LoginScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.login, size: 100, color: Colors.white),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Selamat Datang',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
                     const SizedBox(height: 40),
 
                     // ngisi email
@@ -110,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                       style: const TextStyle(color: Colors.black),
+                      validator: _authService_Rapli.validateEmail_Rapli,
                     ),
                     const SizedBox(height: 20),
 
@@ -151,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                       style: const TextStyle(color: Colors.black),
+                      validator: _authService_Rapli.validatePassword_Rapli,
                     ),
                     const SizedBox(height: 40),
 
@@ -181,11 +201,10 @@ class _LoginScreenState extends State<LoginScreen>
 
                     // Tombol Daftar
                     TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/register');
-                      },
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/register'),
                       child: const Text(
-                        'Belum punya akun? Daftar',
+                        "Belum punya akun? Daftar",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -198,4 +217,20 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
+
+  InputDecoration input(String label) => InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.8),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      );
+
+  ButtonStyle button() => ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue,
+        minimumSize: const Size(double.infinity, 55),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        elevation: 10,
+      );
 }

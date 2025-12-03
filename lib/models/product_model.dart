@@ -1,11 +1,11 @@
-class ProductModel {
+class ProductModel_taruna { 
   final String productId;
   final String name;
   final double price;
   final int stock;
   final String imageUrl;
 
-  ProductModel({
+  ProductModel_taruna({
     required this.productId,
     required this.name,
     required this.price,
@@ -13,8 +13,8 @@ class ProductModel {
     required this.imageUrl,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
+  factory ProductModel_taruna.fromJson(Map<String, dynamic> json) {
+    return ProductModel_taruna(
       productId: json['product_id'],
       name: json['name'],
       price: json['price'].toDouble(),
