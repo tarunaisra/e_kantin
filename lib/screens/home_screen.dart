@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../models/product_model.dart';
 
 class HomeScreen_Yogi extends StatefulWidget {
   const HomeScreen_Yogi({super.key});
@@ -12,27 +15,35 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  final List<Map<String, dynamic>> products = [
-    {
-      'name': 'Nasi Goreng',
-      'price': 15000,
-      'image': 'assets/images/nasi_goreng.jpg',
-    },
-    {
-      'name': 'Sate Kambing',
-      'price': 35000,
-      'image': 'assets/images/sate_kambing.jpg',
-    },
-    {
-      'name': 'Soto Ayam',
-      'price': 20000,
-      'image': 'assets/images/soto_ayam.jpg',
-    },
-    {
-      'name': 'Rujak Lontong',
-      'price': 12000,
-      'image': 'assets/images/rujak_lontong.jpg',
-    },
+  final List<ProductModel_taruna> products_Yogi = [
+    ProductModel_taruna(
+      productId: '1',
+      name: 'Nasi Goreng',
+      price: 15000,
+      stock: 20,
+      imageUrl: 'assets/images/nasi_goreng.jpg',
+    ),
+    ProductModel_taruna(
+      productId: '2',
+      name: 'Sate Kambing',
+      price: 35000,
+      stock: 15,
+      imageUrl: 'assets/images/sate_kambing.jpg',
+    ),
+    ProductModel_taruna(
+      productId: '3',
+      name: 'Soto Ayam',
+      price: 20000,
+      stock: 25,
+      imageUrl: 'assets/images/soto_ayam.jpg',
+    ),
+    ProductModel_taruna(
+      productId: '4',
+      name: 'Rujak Lontong',
+      price: 12000,
+      stock: 18,
+      imageUrl: 'assets/images/rujak_lontong.jpg',
+    ),
   ];
 
   @override
@@ -98,11 +109,11 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
               right: 20,
               bottom: 20,
             ),
-            itemCount: products.length,
+            itemCount: products_Yogi.length,
             itemBuilder: (context, index) {
-              final product = products[index];
+              final product = products_Yogi[index];
               final price =
-                  'Rp ${product['price'].toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
+                  'Rp ${product.price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
@@ -119,7 +130,7 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.asset(
-                        product['image'],
+                        product.imageUrl,
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
@@ -127,7 +138,7 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
                     ),
 
                     title: Text(
-                      product['name'],
+                      product.name,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -135,30 +146,36 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
                       ),
                     ),
                     subtitle: Text(
-                      'Harga: $price',
+                      'Harga: $price | Stok: ${product.stock}',
                       style: const TextStyle(color: Colors.white70),
                     ),
 
                     trailing: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${product['name']} ditambahkan ke keranjang',
-                            ),
-                            backgroundColor: const Color(0xFF003366),
-                          ),
-                        );
-                      },
+                      onPressed: product.stock > 0
+                          ? () {
+                              // Add to cart using provider
+                              Provider.of<CartProvider_taruna>(context, listen: false)
+                                  .addToCart(product);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${product.name} ditambahkan ke keranjang',
+                                  ),
+                                  backgroundColor: const Color(0xFF003366),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: product.stock > 0 ? Colors.white : Colors.grey,
                         foregroundColor: const Color(0xFF003366),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 5,
                       ),
-                      child: const Text('Tambah'),
+                      child: Text(product.stock > 0 ? 'Tambah' : 'Habis'),
                     ),
                   ),
                 ),

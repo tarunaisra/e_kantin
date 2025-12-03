@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:provider/provider.dart';
 import '../widgets/loading_indicator.dart';
+import '../providers/cart_provider.dart';
 
 class CheckoutScreen_Rapli extends StatefulWidget {
-  final List<Map<String, dynamic>> cartItems_Rapli;
-  final double totalPrice_Rapli;
+  final String nim_Rapli;
   final String pickupTime_Rapli;
 
   const CheckoutScreen_Rapli({
     super.key,
-    required this.cartItems_Rapli,
-    required this.totalPrice_Rapli,
+    required this.nim_Rapli,
     required this.pickupTime_Rapli,
   });
 
@@ -21,10 +20,7 @@ class CheckoutScreen_Rapli extends StatefulWidget {
 class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
   bool _isProcessing_Rapli = false;
 
-  void _showPaymentSuccess_Rapli(BuildContext context) {
-    // Generate random Order ID
-    final orderId_Rapli = 'EK${Random().nextInt(90000) + 10000}'; // EK10000-99999
-
+  void _showPaymentSuccess_Rapli(BuildContext context, String trxId_Rapli, double finalPrice_Rapli) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -65,15 +61,15 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
                   fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 16),
-            // Order ID
+            // Transaction ID
             Text(
-              'ID Pesanan: $orderId_Rapli',
+              'ID Transaksi: $trxId_Rapli',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // Total & Pickup
             Text(
-              'Total: Rp ${widget.totalPrice_Rapli.toInt()}',
+              'Total: Rp ${finalPrice_Rapli.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -102,7 +98,7 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
     );
   }
 
-  Future<void> _confirmOrder_Rapli(BuildContext context) async {
+  Future<void> _confirmOrder_Rapli(BuildContext context, CartProvider_taruna provider) async {
     if (_isProcessing_Rapli) return;
     setState(() => _isProcessing_Rapli = true);
 
@@ -116,17 +112,24 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
     );
 
     try {
-      // simulate processing time (here you would call backend / save order)
-      await Future.delayed(const Duration(seconds: 1));
+      // Call real checkout from provider (save to Firestore + update stok)
+      final trxId_Rapli = await provider.checkout_taruna(
+        nim: widget.nim_Rapli,
+        pickupTime: widget.pickupTime_Rapli,
+      );
 
       // dismiss loading
       Navigator.of(context).pop();
 
-      // show success
-      _showPaymentSuccess_Rapli(context);
+      // show success dengan final price
+      final finalPrice = provider.getFinalPrice_taruna(widget.nim_Rapli);
+      _showPaymentSuccess_Rapli(context, trxId_Rapli, finalPrice);
     } catch (e) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Checkout gagal: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Checkout gagal: $e'),
+        backgroundColor: Colors.red,
+      ));
     } finally {
       if (mounted) setState(() => _isProcessing_Rapli = false);
     }
@@ -134,22 +137,65 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CartProvider_taruna>(context);
+    final totalPrice_Rapli = provider.totalPrice;
+    final discount_Rapli = provider.getDiscount_taruna(widget.nim_Rapli);
+    final finalPrice_Rapli = provider.getFinalPrice_taruna(widget.nim_Rapli);
+    final discountType_Rapli = provider.getDiscountType_taruna(widget.nim_Rapli);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Konfirmasi Pesanan')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            Text('NIM: ${widget.nim_Rapli}'),
+            const SizedBox(height: 12),
             Text('Pickup: ${widget.pickupTime_Rapli}'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             const Text('Metode: Cash'),
-            const Spacer(),
-            Text('Total: Rp ${widget.totalPrice_Rapli.toInt()}', style: const TextStyle(fontSize: 24)),
+            const SizedBox(height: 20),
+            // Divider
+            Divider(color: Colors.grey.shade300),
             const SizedBox(height: 16),
+            // Pricing breakdown
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Subtotal:'),
+                Text('Rp ${totalPrice_Rapli.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(discountType_Rapli),
+                Text(
+                  '- Rp ${discount_Rapli.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+            // Final Total
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Total:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Rp ${finalPrice_Rapli.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+                ),
+              ],
+            ),
+            const Spacer(),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isProcessing_Rapli ? null : () => _confirmOrder_Rapli(context),
+                onPressed: _isProcessing_Rapli ? null : () => _confirmOrder_Rapli(context, provider),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
@@ -166,3 +212,4 @@ class _CheckoutScreen_RapliState extends State<CheckoutScreen_Rapli> {
     );
   }
 }
+
