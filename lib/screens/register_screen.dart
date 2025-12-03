@@ -175,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                         labelText: 'Password',
                         labelStyle: const TextStyle(color: Colors.white),
                         filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
+                        
                         fillColor: Colors.white.withOpacity(0.8),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -203,7 +203,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // --- Field Konfirmasi Password ---
+                    // konfim password
                     TextField(
                       controller: _confirmPasswordController,
                       obscureText: true,

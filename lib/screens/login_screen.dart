@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen>
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
-                // Ditambahkan agar aman saat keyboard muncul
+                
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
