@@ -1,28 +1,39 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
-/// Register Screen (UI: Yogi, Auth: Rapli)
+
 class RegisterScreen_Yogi extends StatefulWidget {
   const RegisterScreen_Yogi({super.key});
 
   @override
+  // ignore: camel_case_types
   State<RegisterScreen_Yogi> createState() => _RegisterScreenState_Yogi();
 }
 
+// ignore: camel_case_types
 class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
+  // ignore: non_constant_identifier_names
   final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
+
+  // ignore: non_constant_identifier_names
   final GlobalKey<FormState> _formKey_Yogi = GlobalKey<FormState>();
 
+  // ignore: non_constant_identifier_names
   final TextEditingController _name_Yogi = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController _email_Yogi = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController _password_Yogi = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController _confirmPassword_Yogi = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController _nim_Yogi = TextEditingController();
 
+  // ignore: non_constant_identifier_names
   bool _isLoading_Yogi = false;
 
   @override
@@ -69,7 +80,11 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.person_add, size: 100, color: Colors.white),
+                      const Icon(
+                        Icons.person_add,
+                        size: 100,
+                        color: Colors.white,
+                      ),
                       const SizedBox(height: 20),
                       const Text(
                         'Daftar Akun',
@@ -91,81 +106,21 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 20),
 
-                    // --- Field Password ---
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      cursorColor: Colors.white,
-                      onChanged: (value) {
-                        if (kDebugMode) print('Password: $value');
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        
-                        fillColor: Colors.white.withOpacity(0.8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          ),
-                        ),
+                      TextFormField(
+                        controller: _name_Yogi,
+                        validator: (value) =>
+                            value!.isEmpty ? "Nama tidak boleh kosong" : null,
+                        decoration: _inputStyle_Yogi("Nama Lengkap"),
+                        style: const TextStyle(color: Colors.black),
                       ),
                       const SizedBox(height: 20),
 
-                    // konfim password
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      cursorColor: Colors.white,
-                      onChanged: (value) {
-                        if (kDebugMode) print('Konfirmasi Password: $value');
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Konfirmasi Password',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        // --- PERBAIKAN: Ganti withValues menjadi withOpacity ---
-                        fillColor: Colors.white.withOpacity(0.8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          ),
-                        ),
+                      TextFormField(
+                        controller: _email_Yogi,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _authService_Rapli.validateEmail_Rapli,
+                        decoration: _inputStyle_Yogi("Email"),
+                        style: const TextStyle(color: Colors.black),
                       ),
                       const SizedBox(height: 20),
 
@@ -182,12 +137,9 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       TextFormField(
                         controller: _confirmPassword_Yogi,
                         obscureText: true,
-                        validator: (value) {
-                          if (value != _password_Yogi.text) {
-                            return "Konfirmasi password tidak cocok";
-                          }
-                          return null;
-                        },
+                        validator: (value) => value != _password_Yogi.text
+                            ? "Konfirmasi password tidak cocok"
+                            : null,
                         decoration: _inputStyle_Yogi("Konfirmasi Password"),
                         style: const TextStyle(color: Colors.black),
                       ),
@@ -200,23 +152,30 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                                 if (_formKey_Yogi.currentState!.validate()) {
                                   setState(() => _isLoading_Yogi = true);
 
-                                  final user =
-                                      await _authService_Rapli.registerUser_Rapli(
-                                    email: _email_Yogi.text.trim(),
-                                    password: _password_Yogi.text.trim(),
-                                    nim: _nim_Yogi.text.trim(),
-                                    fullName: _name_Yogi.text.trim(),
-                                  );
+                                  final user = await _authService_Rapli
+                                      .registerUser_Rapli(
+                                        email: _email_Yogi.text.trim(),
+                                        password: _password_Yogi.text.trim(),
+                                        nim: _nim_Yogi.text.trim(),
+                                        fullName: _name_Yogi.text.trim(),
+                                      );
 
                                   setState(() => _isLoading_Yogi = false);
 
+                                  if (!mounted)
+                                    return; 
+
                                   if (user != null) {
                                     Navigator.pushReplacementNamed(
-                                        context, '/login'); // ← Sesuai tugas
+                                      context,
+                                      '/login',
+                                    );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Registrasi gagal, coba lagi."),
+                                        content: Text(
+                                          "Registrasi gagal, coba lagi.",
+                                        ),
                                       ),
                                     );
                                   }
@@ -260,14 +219,18 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     );
   }
 
+  // ignore: non_constant_identifier_names
   InputDecoration _inputStyle_Yogi(String label) {
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(color: Colors.white),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.8),
+      // ⬅️ perbaikan deprecated warning from withOpacity()
+      fillColor: const Color(0xFFFFFFFF).withValues(alpha: 0.8),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
         borderSide: const BorderSide(color: Colors.white, width: 2),
