@@ -1,39 +1,27 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
-
 class RegisterScreen_Yogi extends StatefulWidget {
   const RegisterScreen_Yogi({super.key});
 
   @override
-  // ignore: camel_case_types
   State<RegisterScreen_Yogi> createState() => _RegisterScreenState_Yogi();
 }
 
-// ignore: camel_case_types
 class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // ignore: non_constant_identifier_names
   final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
-
-  // ignore: non_constant_identifier_names
   final GlobalKey<FormState> _formKey_Yogi = GlobalKey<FormState>();
 
-  // ignore: non_constant_identifier_names
   final TextEditingController _name_Yogi = TextEditingController();
-  // ignore: non_constant_identifier_names
   final TextEditingController _email_Yogi = TextEditingController();
-  // ignore: non_constant_identifier_names
   final TextEditingController _password_Yogi = TextEditingController();
-  // ignore: non_constant_identifier_names
   final TextEditingController _confirmPassword_Yogi = TextEditingController();
-  // ignore: non_constant_identifier_names
   final TextEditingController _nim_Yogi = TextEditingController();
 
-  // ignore: non_constant_identifier_names
   bool _isLoading_Yogi = false;
 
   @override
@@ -162,9 +150,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
 
                                   setState(() => _isLoading_Yogi = false);
 
-                                  if (!mounted) {
-                                    return;
-                                  } 
+                                  if (!mounted) return;
 
                                   if (user != null) {
                                     Navigator.pushReplacementNamed(
@@ -220,13 +206,11 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     );
   }
 
-  // ignore: non_constant_identifier_names
   InputDecoration _inputStyle_Yogi(String label) {
     return InputDecoration(
       labelText: label,
       labelStyle: const TextStyle(color: Colors.white),
       filled: true,
-      // ⬅️ perbaikan deprecated warning from withOpacity()
       fillColor: const Color(0xFFFFFFFF).withValues(alpha: 0.8),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
       enabledBorder: OutlineInputBorder(
