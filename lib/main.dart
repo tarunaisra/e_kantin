@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         title: 'E-Kantin',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.red,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: const WelcomeScreen(),
