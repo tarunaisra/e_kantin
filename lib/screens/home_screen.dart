@@ -66,7 +66,6 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appbar transparan
       appBar: AppBar(
         title: const Text(
           'Menu',
@@ -91,7 +90,6 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
         ],
       ),
       extendBodyBehindAppBar: true,
-
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -118,22 +116,30 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
               return Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
                 child: Card(
-                  color: Colors.white.withOpacity(0.08),
+                  color: Colors.white.withOpacity(0.12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(18),
+                    side: BorderSide(color: Colors.white.withOpacity(0.18)),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(15),
+                    contentPadding: const EdgeInsets.all(18),
 
-                    // gambar dari produk
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        product.imageUrl,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
+                    // GAMBAR MAKANAN BESAR & MENARIK
+                    leading: Container(
+                      width: 85,
+                      height: 85,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.4),
+                            blurRadius: 6,
+                            offset: const Offset(2, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(product.imageUrl, fit: BoxFit.cover),
                       ),
                     ),
 
@@ -142,20 +148,24 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                     subtitle: Text(
                       'Harga: $price | Stok: ${product.stock}',
-                      style: const TextStyle(color: Colors.white70),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
                     ),
 
                     trailing: ElevatedButton(
                       onPressed: product.stock > 0
                           ? () {
-                              // Add to cart using provider
-                              Provider.of<CartProvider_taruna>(context, listen: false)
-                                  .addToCart(product);
+                              Provider.of<CartProvider_taruna>(
+                                context,
+                                listen: false,
+                              ).addToCart(product);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -168,14 +178,23 @@ class _HomeScreenState_Yogi extends State<HomeScreen_Yogi>
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: product.stock > 0 ? Colors.white : Colors.grey,
+                        backgroundColor: product.stock > 0
+                            ? Colors.white
+                            : Colors.grey,
                         foregroundColor: const Color(0xFF003366),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(25),
                         ),
-                        elevation: 5,
+                        elevation: 6,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
                       ),
-                      child: Text(product.stock > 0 ? 'Tambah' : 'Habis'),
+                      child: Text(
+                        product.stock > 0 ? 'Tambah' : 'Habis',
+                        style: const TextStyle(fontSize: 13),
+                      ),
                     ),
                   ),
                 ),

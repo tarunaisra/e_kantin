@@ -13,14 +13,35 @@ class CartScreen_taruna extends StatefulWidget {
   State<CartScreen_taruna> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen_taruna> {
+class _CartScreenState extends State<CartScreen_taruna>
+    with SingleTickerProviderStateMixin {
   final AuthService_Rapli _authService = AuthService_Rapli();
   String? _userNim_taruna;
+
+  late AnimationController _cartAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadUserNim_taruna();
+
+    _cartAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 220),
+      lowerBound: 0.96,
+      upperBound: 1.05,
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _cartAnimation,
+      curve: Curves.easeOutBack,
+    );
+  }
+
+  @override
+  void dispose() {
+    _cartAnimation.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserNim_taruna() async {
@@ -39,14 +60,15 @@ class _CartScreenState extends State<CartScreen_taruna> {
 
   String pickupTime = 'Sekarang';
   final List<String> pickupOptions = ['Sekarang', '12:00', '12:30', '13:00'];
-
   void _selectPickupTime(String time) => setState(() => pickupTime = time);
 
   void _proceedToCheckout() {
     if (_userNim_taruna == null || _userNim_taruna!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('NIM tidak ditemukan. Silakan logout dan login kembali.'),
+          content: Text(
+            'NIM tidak ditemukan. Silakan logout dan login kembali.',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -66,33 +88,38 @@ class _CartScreenState extends State<CartScreen_taruna> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Pesanan Saya'),
-
+        title: const Text(
+          'Pesanan Saya',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.access_time, color: Colors.white),
+            icon: const Icon(Icons.access_time, color: Colors.white),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text('Pilih Waktu Ambil'),
+                  title: const Text('Pilih Waktu Ambil'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: pickupOptions
-                        .map((option) => ListTile(
-                              title: Text(option),
-                              onTap: () {
-                                _selectPickupTime(option);
-                                Navigator.pop(context);
-                              },
-                            ))
+                        .map(
+                          (option) => ListTile(
+                            title: Text(option),
+                            onTap: () {
+                              _selectPickupTime(option);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        )
                         .toList(),
                   ),
                 ),
@@ -101,7 +128,6 @@ class _CartScreenState extends State<CartScreen_taruna> {
           ),
         ],
       ),
-      extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -111,144 +137,143 @@ class _CartScreenState extends State<CartScreen_taruna> {
           ),
         ),
         child: Consumer<CartProvider_taruna>(
-              builder: (context, provider, _) {
-                final items = provider.cartItems;
-                if (items.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'Keranjang kosong',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+          builder: (context, provider, _) {
+            final items = provider.cartItems;
+            if (items.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Keranjang kosong',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              );
+            }
+
+            // Group by product
+            final Map<String, Map<String, dynamic>> grouped = {};
+            for (var it in items) {
+              final key = it.productId;
+              if (!grouped.containsKey(key)) {
+                grouped[key] = {'product': it, 'quantity': 1};
+              } else {
+                grouped[key]!['quantity'] = grouped[key]!['quantity'] + 1;
+              }
+            }
+            final groupedList = grouped.values.toList();
+
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(
+                      top: kToolbarHeight + 20,
+                      left: 16,
+                      right: 16,
                     ),
-                  );
-                }
+                    itemCount: groupedList.length,
+                    itemBuilder: (context, index) {
+                      final entry = groupedList[index];
+                      final ProductModel_taruna product = entry['product'];
+                      final int quantity = entry['quantity'];
 
-                // Group items by productId to show quantity
-                final Map<String, Map<String, dynamic>> grouped = {};
-                for (var it in items) {
-                  final key = it.productId;
-                  if (!grouped.containsKey(key)) {
-                    grouped[key] = {
-                      'product': it,
-                      'quantity': 1,
-                    };
-                  } else {
-                    grouped[key]!['quantity'] = grouped[key]!['quantity'] + 1;
-                  }
-                }
-
-                final groupedList = grouped.values.toList();
-
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(top: kToolbarHeight + 20, left: 16, right: 16),
-                        itemCount: groupedList.length,
-                        itemBuilder: (context, index) {
-                          final entry = groupedList[index];
-                          final ProductModel_taruna product = entry['product'];
-                          final int quantity = entry['quantity'];
-
-                          return Card(
-                            color: Colors.white.withOpacity(0.1),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: AssetImage(product.imageUrl),
-                                radius: 30,
-                                child: Icon(Icons.fastfood, color: Colors.white),
-                              ),
-                              title: Text(product.name, style: TextStyle(color: Colors.white)),
-                              subtitle: Text('Rp ${product.price.toInt()} x $quantity', style: TextStyle(color: Colors.white70)),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                      icon: Icon(Icons.remove, color: Colors.white),
-                                      onPressed: () {
-                                        provider.removeFromCart(product.productId);
-                                      }),
-                                  Text('$quantity', style: TextStyle(color: Colors.white)),
-                                  IconButton(
-                                      icon: Icon(Icons.add, color: Colors.white),
-                                      onPressed: () {
-                                        provider.addToCart(product);
-                                      }),
-                                  IconButton(icon: Icon(Icons.delete, color: Colors.red), onPressed: () {
-                                    // remove all occurrences
+                      return ScaleTransition(
+                        scale: _scaleAnimation,
+                        child: Card(
+                          color: Colors.white.withOpacity(0.1),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(product.imageUrl),
+                              radius: 30,
+                            ),
+                            title: Text(
+                              product.name,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            subtitle: Text(
+                              'Rp ${product.price.toInt()} x $quantity',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.remove,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    provider.removeFromCart(product.productId);
+                                    _cartAnimation.forward(from: 0.96);
+                                  },
+                                ),
+                                Text(
+                                  '$quantity',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    provider.addToCart(product);
+                                    _cartAnimation.forward(from: 0.96);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
                                     for (int i = 0; i < quantity; i++) {
-                                      provider.removeFromCart(product.productId);
+                                      provider.removeFromCart(
+                                        product.productId,
+                                      );
                                     }
-                                  }),
-                                ],
-                              ),
+                                    _cartAnimation.forward(from: 0.96);
+                                  },
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Total: Rp ${provider.totalPrice.toInt()}', style: TextStyle(color: Colors.white, fontSize: 18)),
-                          ElevatedButton(
-                            onPressed: _proceedToCheckout,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Color(0xFF003366),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            ),
-                            child: Text('Checkout'),
                           ),
-                        ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total: Rp ${provider.totalPrice.toInt()}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-      ),
-    );
-  }
-}
-
-class CheckoutScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> cartItems;
-  final double totalPrice;
-  final String pickupTime;
-
-  const CheckoutScreen({super.key, required this.cartItems, required this.totalPrice, required this.pickupTime});
-
-  void _confirmOrder(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Pesanan dikonfirmasi! Bayar cash saat pickup pada $pickupTime.'), duration: Duration(seconds: 2)),
-    );
-
-    Future.delayed(Duration(seconds: 2), () {
-      Navigator.popUntil(context, (route) => route.isFirst);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Konfirmasi Pesanan')),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text('Pickup: $pickupTime'),
-            SizedBox(height: 20),
-            Text('Metode: Cash'),
-            Spacer(),
-            Text('Total: Rp ${totalPrice.toInt()}', style: TextStyle(fontSize: 24)),
-            ElevatedButton(
-              onPressed: () => _confirmOrder(context),
-              child: Text('Konfirmasi'),
-            ),
-          ],
+                      ElevatedButton(
+                        onPressed: _proceedToCheckout,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF003366),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text('Checkout'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
