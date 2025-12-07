@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const HomeScreen_Yogi(), // pilih yang dari main karena ini pembagian tugas
           '/cart': (context) => const CartScreen_taruna(),
           LoadingIndicator_Rapli.routeName_Rapli: (context) => const LoadingIndicator_Rapli(),
+          
         },
       ),
     );
