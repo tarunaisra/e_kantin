@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // Tambahkan untuk kDebugMode
+import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 
 class LoginScreen_Yogi extends StatefulWidget {
@@ -18,7 +18,9 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
   final TextEditingController _password_Yogi = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService_Rapli _authService_Rapli = AuthService_Rapli();
+
   bool _isLoading_Rapli = false;
+  bool _isPasswordVisible_Yogi = false;
 
   @override
   void initState() {
@@ -65,16 +67,35 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
     }
   }
 
+  InputDecoration _inputStyle_Yogi(String label, {Widget? suffixIcon}) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.black54),
+      filled: true,
+      fillColor: Colors.grey.shade200,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(color: Color(0xFF003366), width: 2),
+      ),
+      suffixIcon: suffixIcon,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF003366), // navy
-              Color(0xFF000033), // biru tua
-            ],
+            colors: [Color(0xFF003366), Color(0xFF000033)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -86,97 +107,56 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
                 child: Form(
-                  // Bungkus dengan Form
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.login, size: 100, color: Colors.white),
                       const SizedBox(height: 40),
-                      // Email Field
+
+                      // Email
                       TextFormField(
                         controller: _email_Yogi,
                         keyboardType: TextInputType.emailAddress,
-                        cursorColor: Colors.white,
-                        onChanged: (value) {
-                          if (kDebugMode) print('Email: $value');
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: const TextStyle(color: Colors.white),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 1,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
-                        ),
+                        cursorColor: Colors.black,
+                        decoration: _inputStyle_Yogi("Email"),
                         style: const TextStyle(color: Colors.black),
                         validator: _authService_Rapli.validateEmail_Rapli,
                       ),
                       const SizedBox(height: 20),
-                      // Password Field
+
+                      // Password
                       TextFormField(
                         controller: _password_Yogi,
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        cursorColor: Colors.white,
-                        onChanged: (value) {
-                          if (kDebugMode) print('Password: $value');
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          labelStyle: const TextStyle(color: Colors.white),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 1,
+                        obscureText: !_isPasswordVisible_Yogi,
+                        cursorColor: Colors.black,
+                        decoration: _inputStyle_Yogi(
+                          "Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible_Yogi
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black54,
                             ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 1,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible_Yogi =
+                                    !_isPasswordVisible_Yogi;
+                              });
+                            },
                           ),
                         ),
                         style: const TextStyle(color: Colors.black),
                         validator: _authService_Rapli.validatePassword_Rapli,
                       ),
                       const SizedBox(height: 40),
-                      // Tombol Masuk
+
+                      // Tombol Login
                       _isLoading_Rapli
                           ? const CircularProgressIndicator()
                           : ElevatedButton(
-                              onPressed: _login_Rapli, // Panggil fungsi login
+                              onPressed: _login_Rapli,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF003366),
@@ -187,7 +167,7 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
                                 elevation: 10,
                               ),
                               child: const Text(
-                                'Masuk',
+                                "Masuk",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -195,7 +175,8 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
                               ),
                             ),
                       const SizedBox(height: 20),
-                      // Tombol Daftar
+
+                      // Navigasi ke register
                       TextButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, '/register'),

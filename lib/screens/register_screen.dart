@@ -23,6 +23,8 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
   final TextEditingController _nim_Yogi = TextEditingController();
 
   bool _isLoading_Yogi = false;
+  bool _isPasswordVisible_Yogi = false;
+  bool _isConfirmPasswordVisible_Yogi = false;
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 40),
 
+                      // NIM
                       TextFormField(
                         controller: _nim_Yogi,
                         keyboardType: TextInputType.number,
@@ -94,6 +97,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 20),
 
+                      // Nama Lengkap
                       TextFormField(
                         controller: _name_Yogi,
                         validator: (value) =>
@@ -103,6 +107,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 20),
 
+                      // Email
                       TextFormField(
                         controller: _email_Yogi,
                         keyboardType: TextInputType.emailAddress,
@@ -112,27 +117,61 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                       ),
                       const SizedBox(height: 20),
 
+                      // Password
                       TextFormField(
                         controller: _password_Yogi,
-                        obscureText: true,
-                        validator: (value) =>
-                            _authService_Rapli.validatePassword_Rapli(value),
-                        decoration: _inputStyle_Yogi("Password"),
+                        obscureText: !_isPasswordVisible_Yogi,
+                        validator: _authService_Rapli.validatePassword_Rapli,
+                        decoration: _inputStyle_Yogi(
+                          "Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible_Yogi
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black54,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible_Yogi =
+                                    !_isPasswordVisible_Yogi;
+                              });
+                            },
+                          ),
+                        ),
                         style: const TextStyle(color: Colors.black),
                       ),
                       const SizedBox(height: 20),
 
+                      // Konfirmasi Password
                       TextFormField(
                         controller: _confirmPassword_Yogi,
-                        obscureText: true,
+                        obscureText: !_isConfirmPasswordVisible_Yogi,
                         validator: (value) => value != _password_Yogi.text
                             ? "Konfirmasi password tidak cocok"
                             : null,
-                        decoration: _inputStyle_Yogi("Konfirmasi Password"),
+                        decoration: _inputStyle_Yogi(
+                          "Konfirmasi Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible_Yogi
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black54,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordVisible_Yogi =
+                                    !_isConfirmPasswordVisible_Yogi;
+                              });
+                            },
+                          ),
+                        ),
                         style: const TextStyle(color: Colors.black),
                       ),
                       const SizedBox(height: 40),
 
+                      // Tombol Registrasi
                       _isLoading_Yogi
                           ? const CircularProgressIndicator()
                           : ElevatedButton(
@@ -170,7 +209,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: const Color(0xFF003366),
+                                foregroundColor: Color(0xFF003366),
                                 minimumSize: const Size(double.infinity, 55),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -178,7 +217,7 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
                                 elevation: 10,
                               ),
                               child: const Text(
-                                'Daftar Sekarang',
+                                "Daftar Sekarang",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -206,20 +245,23 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
     );
   }
 
-  InputDecoration _inputStyle_Yogi(String label) {
+  // STYLE FIELD INPUT
+  InputDecoration _inputStyle_Yogi(String label, {Widget? suffixIcon}) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white),
+      labelStyle: const TextStyle(color: Colors.black54),
       filled: true,
-      fillColor: const Color(0xFFFFFFFF).withValues(alpha: 0.8),
+      fillColor: Colors.grey.shade200, // abu putih lembut
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(color: Colors.transparent, width: 0),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: const BorderSide(color: Colors.white, width: 2),
+        borderSide: const BorderSide(color: Color(0xFF003366), width: 2),
       ),
+      suffixIcon: suffixIcon,
     );
   }
 }
