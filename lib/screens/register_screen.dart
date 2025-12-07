@@ -162,8 +162,9 @@ class _RegisterScreenState_Yogi extends State<RegisterScreen_Yogi>
 
                                   setState(() => _isLoading_Yogi = false);
 
-                                  if (!mounted)
-                                    return; 
+                                  if (!mounted) {
+                                    return;
+                                  } 
 
                                   if (user != null) {
                                     Navigator.pushReplacementNamed(
