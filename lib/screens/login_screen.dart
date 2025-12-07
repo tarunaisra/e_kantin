@@ -82,7 +82,7 @@ class _LoginScreen_YogiState extends State<LoginScreen_Yogi>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: const BorderSide(color: Color(0xFF003366), width: 2),
+        borderSide: const BorderSide(color: Color.fromARGB(255, 151, 152, 154), width: 2),
       ),
       suffixIcon: suffixIcon,
     );
