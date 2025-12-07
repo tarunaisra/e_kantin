@@ -9,26 +9,34 @@ class AuthService_Rapli {
   final FirebaseAuth _auth_Rap = FirebaseAuth.instance;
   final FirebaseFirestore _firestore_Rap = FirebaseFirestore.instance;
 
-  // Fungsi Validasi Email Domain Kampu
+  // Fungsi Validasi Email Domain Kampus dan Gmail
   String? validateEmail_Rapli(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email tidak boleh kosong';
     }
 
-    // Perbaikan: Menggunakan RegExp untuk validasi format email + domain wajib
-    const String campusdomainR = r'@gmail\.com$';
-    final RegExp emailregexR = RegExp(r'^[a-zA-Z0-9.]+' + campusdomainR);
+    // Validasi format email yang menerima domain kampus dan gmail.com
+    final RegExp emailregexR = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    );
 
     if (!emailregexR.hasMatch(value)) {
-      return 'Wajib gunakan format email yang valid dan domain kampus (ex: @gmail.com)!';
+      return 'Gunakan format email yang valid (kampus atau gmail.com)';
     }
+    
+    // Validasi tambahan untuk memastikan email kampus atau gmail
+    if (!value.endsWith('.ac.id') && !value.endsWith('@gmail.com')) {
+      return 'Gunakan email kampus (.ac.id) atau gmail.com';
+    }
+    
     return null;
   }
 
   // 2. Fungsi Validasi Password (> 6 Char) 
   String? validatePassword_Rapli(String? value) {
-    if (value == null || value.length <= 6) {
-      return 'Password harus lebih dari 6 karakter (Min. 7 Karakter)';
+    // Minimal 6 karakter sesuai permintaan
+    if (value == null || value.length < 6) {
+      return 'Password harus minimal 6 karakter (Min. 6 Karakter)';
     }
     return null;
   }
